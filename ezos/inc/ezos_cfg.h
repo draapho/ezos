@@ -61,8 +61,9 @@ typedef int16_t ezsm_t;  // State Machine, 任务状态机类型, 必须是有�
 #define EZOS_LOG          // 使能调试打印功能
 #define EZOS_LOG_LEVEL 3  // 定义调试级别. 0-ERROR, 1-DEBUG, 2-WARNING, 3-INFO, 默认值: 3
 
-/* X Macro: 请将任务按优先级从高到低进行宏定义 */
+/* X Macro: 请将任务按优先级从高到低进行X宏定义 */
 /* 最后的字符串用于终端指令, 不用终端可以全部省略 */
+/* 使能 EZOS_MEM 支持动态内存时, 最多253个任务 */
 #define EZOS_TASKS_NAME_FUN_STR           \
     X(TASK_SHELL, task_shell, "")         \
     X(TASK_LED, task_led, "led")          \

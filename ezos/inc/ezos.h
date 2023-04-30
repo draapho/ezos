@@ -48,6 +48,7 @@ typedef enum {
 #undef X
         EZOS_TASK_IDLE,  // 系统空闲任务为最低优先级
     EZOS_TASK_NAME_END,  // 系统任务列表数量
+    EZOS_TASK_NAME_MAX = UINT8_MAX,
 } task_name_t;
 
 struct ez_task {           // ezos 任务类型定义

@@ -49,7 +49,8 @@ extern void ezprv_mem_cpy(uint8_t *dest, uint8_t *src, uint16_t size);
  * \brief           清空动态内存
  */
 void ezos_mem_clear(void) {
-    ezprv_mem_set(mem.task, EZOS_TASK_NAME_END | 0xFF, EZOS_MEM_BLK_NUM);  // | 0xFF, 便于观察调试
+    ASSERT(EZOS_TASK_NAME_END <= EZOS_TASK_NAME_MAX);
+    ezprv_mem_set(mem.task, EZOS_TASK_NAME_MAX, EZOS_MEM_BLK_NUM);
     ezprv_mem_set(mem.tbl, EZOS_MEM_BLK_NUM, EZOS_MEM_BLK_NUM);
 #ifdef EZOS_MEM_CLEAN
     ezprv_mem_set(mem.pool, 0, EZOS_MEM_POOL_SIZE);
@@ -181,14 +182,14 @@ void ezprv_mem_free(uint8_t i) {
     ezprv_mem_set(&mem.pool[i * EZOS_MEM_BLK_SIZE], 0, mem.tbl[i] * EZOS_MEM_BLK_SIZE);
 #endif
 
-    if (mem.task[i] < EZOS_TASK_NAME_END) {                                  // 内存块已申请
-        ezprv_mem_set(&mem.task[i], EZOS_TASK_NAME_END | 0xFF, mem.tbl[i]);  // 设为空闲内存块
-        start = i;                                                           // 默认起始值
-        end = i + mem.tbl[i];                                                // 默认终点值
-        if (i) {                                                             // 不是第一个内存块
-            if (mem.task[i - 1] >= EZOS_TASK_NAME_END) {                     // 前一个是空闲内存块
-                start = i - mem.tbl[i - 1];                                  // 获得空闲块起始偏移量
-                ASSERT(start < i);                                           // mem.tbl 有损坏
+    if (mem.task[i] < EZOS_TASK_NAME_END) {                           // 内存块已申请
+        ezprv_mem_set(&mem.task[i], EZOS_TASK_NAME_MAX, mem.tbl[i]);  // 设为空闲内存块
+        start = i;                                                    // 默认起始值
+        end = i + mem.tbl[i];                                         // 默认终点值
+        if (i) {                                                      // 不是第一个内存块
+            if (mem.task[i - 1] >= EZOS_TASK_NAME_END) {              // 前一个是空闲内存块
+                start = i - mem.tbl[i - 1];                           // 获得空闲块起始偏移量
+                ASSERT(start < i);                                    // mem.tbl 有损坏
                 if (start > i) start = i;
             }
         }
@@ -238,8 +239,8 @@ void ezos_mem_sort(void) {
                 for (search = idle.next; search->name < mem.task[tmpj];) {
                     search = search->next;
                 }
-                if (search->name == mem.task[tmpj]) search->mem = i;              // 重映射关联地址
-                ezprv_mem_set(&mem.task[tmpj], EZOS_TASK_NAME_END | 0xFF, tmpn);  // 标记为空闲块
+                if (search->name == mem.task[tmpj]) search->mem = i;       // 重映射关联地址
+                ezprv_mem_set(&mem.task[tmpj], EZOS_TASK_NAME_MAX, tmpn);  // 标记为空闲块
                 ezprv_mem_set(&mem.tbl[tmpj], tmpn, tmpn);
                 i += tmpn;                                             // 剩余的空闲块起始位置
                 tmpn = j;                                              // 剩余的空闲块数量
@@ -283,11 +284,11 @@ void ezos_mem_sort(void) {
                     for (search = idle.next; search->name < mem.task[j];) {
                         search = search->next;
                     }
-                    if (search->name == mem.task[j]) search->mem = i;              // 重映射关联地址
-                    i += mem.tbl[j];                                               // 空闲块偏移量
-                    ezprv_mem_set(&mem.task[i], EZOS_TASK_NAME_END | 0xFF, tmpn);  // 标记空闲块
-                    ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);                        // 覆盖掉已用块信息
-                    break;                                                         // 跳出j循环, 继续i循环
+                    if (search->name == mem.task[j]) search->mem = i;       // 重映射关联地址
+                    i += mem.tbl[j];                                        // 空闲块偏移量
+                    ezprv_mem_set(&mem.task[i], EZOS_TASK_NAME_MAX, tmpn);  // 标记空闲块
+                    ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);                 // 覆盖掉已用块信息
+                    break;                                                  // 跳出j循环, 继续i循环
                 }
             }
         } else {
