@@ -79,6 +79,16 @@ extern "C" {
 #error EZOS_MEM_SORT error!
 #endif
 
+#ifndef EZOS_LOG
+#undef EZOS_MEM_SHOW
+#endif
+
+#ifdef EZOS_MEM_SHOW
+#define EZOS_MEM_CLEAN
+#else
+#undef EZOS_MEM_CLEAN
+#endif
+
 #if (EZOS_ASSERT_FUN < 0 || EZOS_ASSERT_FUN > 1)
 #error EZOS_ASSERT_FUN error!
 #endif

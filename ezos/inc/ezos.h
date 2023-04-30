@@ -28,6 +28,7 @@
  *
  * Author:          draapho <draapo@gmail.com>
  * Date:            2022/10/18
+ * Date:            2023/04/30 - optimize ezos_mem_sort; simplifier LOG.h;
  */
 #ifndef EZOS_H__
 #define EZOS_H__
@@ -203,7 +204,6 @@ void* ezos_malloc(task_name_t task, uint16_t size, uint16_t* size_got);  // 申�
 void ezos_free(task_name_t name);                                        // 释放动态内存, 一般不需要调用. 任务删除时会自动释放
 void ezos_mem_sort(void);                                                // 内存整理函数, 若配置为自动整理, 一般不需要调用.
 void ezos_mem_clear(void);                                               // 强制清空所有动态内存, 一般不需要调用.
-const ezmm_map_t* ezos_mem_map(void);                                    // 获取动态内存映射关系, 一般不需要调用
 
 // ezos_malloc 和 ezos_free 简化函数
 __STATIC_FORCEINLINE void* self_malloc(uint16_t size) {  // 当前任务, 申请或读取动态内存
@@ -218,6 +218,10 @@ __STATIC_FORCEINLINE void* ezos_mem_get(task_name_t task) {  // 读取指定任�
 __STATIC_FORCEINLINE void self_free(void) {  // 当前任务, 释放动态内存, 一般不需要调用. 任务删除时会自动释放
     ezos_free(ezos_self_name());
 }
+
+#ifdef EZOS_MEM_SHOW
+void ezos_mem_show(void);  // 动态内存显示函数, 仅用于调试观察使用
+#endif
 
 #endif /* EZOS_MEM */
 

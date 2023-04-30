@@ -19,24 +19,7 @@ del mem0
 add mem0 24
 del mem2
 sort
- */
-
-void show_mem(void) {
-    int i, j;
-    char *data;
-    const ezmm_map_t *map;
-
-    map = ezos_mem_map();
-    data = (char *)map->pool;
-    printf("name,\ttbl,\tpool\n");
-    for (i = 0; i < EZOS_MEM_BLK_NUM; i++) {
-        printf("%02x,\t%02x,\t", map->task[i], map->tbl[i]);
-        for (j = 0; j < EZOS_MEM_BLK_SIZE; j++) {
-            printf("%02x ", *data++);
-        }
-        printf("\n");
-    }
-}
+*/
 
 ezsm_t task_mems(ezsm_t s, void *p) {
     char *mem_ptr;  // 每次重入, 都要必须重新读取动态内存指针. 1. 这是个局部变量. 2. 动态内存的指针可能因为优化而改变.
@@ -69,7 +52,7 @@ ezsm_t task_mems(ezsm_t s, void *p) {
             return ++s;
         }
         case 2: {  // 打印出整个动态内存的详细信息
-            show_mem();
+            ezos_mem_show();
             ezos_delay_forever();
             return s;
         }

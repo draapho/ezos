@@ -37,7 +37,7 @@
 typedef int16_t ezsm_t;  // State Machine, 任务状态机类型, 必须是有符号类型.
 
 /* ezos config */
-#define EZOS_TICK_MS 1   // ezos_tick_irq() 调用周期决定ezos的系统时钟, 建议值 1-10ms
+#define EZOS_TICK_MS 1   // ezos_tick_irq() 调用周期决定ezos的系统时钟, 建议值 1-10ms.
 #define EZOS_TASK_MAX 8  // 设置ezos可运行任务数组的最大值. 推荐值: 8-32. 该值只影响内存大小, 不会影响调度性能.
 
 #define EZOS_SEM    // 使能ezos信号量
@@ -45,21 +45,21 @@ typedef int16_t ezsm_t;  // State Machine, 任务状态机类型, 必须是有�
 #define EZOS_EVENT  // 使能ezos事件
 #define EZOS_MQ     // 使能ezos消息队列, Message Queue
 
-#define EZOS_MEM              // 使能ezos动态内存
-#define EZOS_MEM_BLK_SIZE 16  // 动态内存块大小
-#define EZOS_MEM_BLK_NUM 8    // 动态内存块数量, 最大值 254
+#define EZOS_MEM               // 使能ezos动态内存
+#define EZOS_MEM_BLK_NUM 8     // 动态内存块数量, 最大值 254
+#define EZOS_MEM_BLK_SIZE 16U  // 动态内存块大小
 #define EZOS_MEM_POOL_SIZE (EZOS_MEM_BLK_NUM * EZOS_MEM_BLK_SIZE)
-// 注意: 启用内存整理后, 获得的内存指针就类似于 variable 属性, 一旦进行过任务切换, 必须重新读取该指针.
-#define EZOS_MEM_SORT 2   // 内存整理. 0-禁用, 1-仅手动整理, 2-仅申请失败时整理, 3-闲时自动整理
-#define EZOS_MEM_CLEAN 1  // 清空释放后的内存块. 0-不清空, 可节约时间. 1-清空, 便于调试排错
+// 注意: 启用内存整理, 任务切换后, 获得的内存指针地址就可能发生变化, 必须重新读取内存指针.
+#define EZOS_MEM_SORT 2  // 内存整理. 0-禁用, 1-仅手动整理, 2-仅申请失败时整理, 3-闲时自动整理, 默认值: 2
+#define EZOS_MEM_SHOW    // 内存整理时, 显示内存情况. 仅用于观察调试. 需要使能 EZOS_LOG.
 
 // #define EZOS_TEST  // 使能ezos性能测试
 
 #define EZOS_ASSERT        // 使能断言功能
-#define EZOS_ASSERT_FUN 0  // 定义断言函数. 0-进入死循环. 1-ez_printf.
+#define EZOS_ASSERT_FUN 0  // 定义断言函数. 0-进入死循环, 1-ez_printf, 默认值: 0
 
 #define EZOS_LOG          // 使能调试打印功能
-#define EZOS_LOG_LEVEL 3  // 定义调试级别. 0-ERROR; 1-DEBUG; 2-WARNING; 3-INFO;
+#define EZOS_LOG_LEVEL 3  // 定义调试级别. 0-ERROR, 1-DEBUG, 2-WARNING, 3-INFO, 默认值: 3
 
 /* X Macro: 请将任务按优先级从高到低进行宏定义 */
 /* 最后的字符串用于终端指令, 不用终端可以全部省略 */

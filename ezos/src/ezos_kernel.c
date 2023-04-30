@@ -517,13 +517,11 @@ static ezsm_t ezos_task_idle(ezsm_t state, void *para) {
 }
 
 void ezprv_mem_set(uint8_t *dest, uint8_t val, uint16_t size) {
-    while (size--) {
+    while (size--)
         *dest++ = val;
-    }
 }
 
 void ezprv_mem_cpy(uint8_t *dest, uint8_t *src, uint16_t size) {
-    while (size--) {
+    while (size--)
         *dest++ = *src++;
-    }
 }

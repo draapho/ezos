@@ -28,6 +28,7 @@
  *
  * Author:          draapho <draapo@gmail.com>
  * Date:            2022/10/18
+ * Date:            2023/04/30 - optimize ezos_mem_sort
  */
 
 #include "ezos.h"
@@ -50,7 +51,7 @@ extern void ezprv_mem_cpy(uint8_t *dest, uint8_t *src, uint16_t size);
 void ezos_mem_clear(void) {
     ezprv_mem_set(mem.task, EZOS_TASK_NAME_END | 0xFF, EZOS_MEM_BLK_NUM);  // | 0xFF, 便于观察调试
     ezprv_mem_set(mem.tbl, EZOS_MEM_BLK_NUM, EZOS_MEM_BLK_NUM);
-#if (EZOS_MEM_CLEAN != 0)
+#ifdef EZOS_MEM_CLEAN
     ezprv_mem_set(mem.pool, 0, EZOS_MEM_POOL_SIZE);
 #endif
 }
@@ -176,7 +177,7 @@ void ezprv_mem_free(uint8_t i) {
     uint8_t start, end, size;
 
     if (i >= EZOS_MEM_BLK_NUM) return;  // 该动态内存已释放
-#if (EZOS_MEM_CLEAN != 0)
+#ifdef EZOS_MEM_CLEAN
     ezprv_mem_set(&mem.pool[i * EZOS_MEM_BLK_SIZE], 0, mem.tbl[i] * EZOS_MEM_BLK_SIZE);
 #endif
 
@@ -213,10 +214,15 @@ void ezos_mem_sort(void) {
     int16_t j;
     ez_task_t *search;
 
-    for (i = 0; i < EZOS_MEM_BLK_NUM; i += mem.tbl[i]) {                                  // 首次内存整理, 顺向寻找空闲内存块, 逆向寻找并填充匹配的已用内存块
-        if (mem.task[i] >= EZOS_TASK_NAME_END) {                                          // 找到空闲内存块
-            for (j = EZOS_MEM_BLK_NUM - 1, tmpj = 0, tmpn = 0; j > i; j -= mem.tbl[j]) {  // 逆向寻找已用内存块
-                if (mem.task[j] < EZOS_TASK_NAME_END) {                                   // 找到已用内存块
+#ifdef EZOS_MEM_SHOW
+    LOG("before mem sort\n");
+    ezos_mem_show();
+#endif
+
+    for (i = 0; i < EZOS_MEM_BLK_NUM;) {                                                           // 首次内存整理, 顺向寻找空闲内存块, 顺向寻找并填充匹配的已用内存块
+        if (mem.task[i] >= EZOS_TASK_NAME_END) {                                                   // 找到空闲内存块
+            for (j = i + mem.tbl[i], tmpj = 0, tmpn = 0; j < EZOS_MEM_BLK_NUM; j += mem.tbl[j]) {  // 顺向寻找已用内存块
+                if (mem.task[j] < EZOS_TASK_NAME_END) {                                            // 找到已用内存块
                     if ((mem.tbl[j] <= mem.tbl[i]) && (mem.tbl[j] > tmpn)) {
                         tmpn = mem.tbl[j];
                         tmpj = j;                       // 尽量寻找最合适的已用内存块
@@ -224,37 +230,53 @@ void ezos_mem_sort(void) {
                     }
                 }
             }
-            if (tmpj) {                        // 需要移动内存
-                j = tmpj - tmpn + 1;           // 设置移动内存的起始偏移量
-                if ((j > i) && (j <= tmpj)) {  // mem.tbl 未损坏
-                    ezprv_mem_cpy(&mem.pool[i * EZOS_MEM_BLK_SIZE], &mem.pool[j * EZOS_MEM_BLK_SIZE], tmpn * EZOS_MEM_BLK_SIZE);
-                    ezprv_mem_set(&mem.task[i], mem.task[j], tmpn);  // 标记为已用块
-                    tmpj = mem.tbl[i] - tmpn;                        // 切分原空闲块, 记录切分后的大小
-                    ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);          // 设置已用内存块大小
-                    for (search = idle.next; search->name < mem.task[j];) {
-                        search = search->next;
-                    }
-                    if (search->name == mem.task[j]) search->mem = i;              // 重映射关联地址
-                    ezprv_mem_set(&mem.task[j], EZOS_TASK_NAME_END | 0xFF, tmpn);  // 标记为空闲块
-                    ezprv_mem_set(&mem.tbl[j], tmpn, tmpn);                        // 暂时不做空闲块合并
-                    i += tmpn;                                                     // 剩余的空闲块
-                    ezprv_mem_set(&mem.tbl[i], tmpj, tmpj);                        // 重新标记空闲块大小                                                  // 继续i循环
+            if (tmpj) {  // 需要移动内存
+                ezprv_mem_cpy(&mem.pool[i * EZOS_MEM_BLK_SIZE], &mem.pool[tmpj * EZOS_MEM_BLK_SIZE], tmpn * EZOS_MEM_BLK_SIZE);
+                ezprv_mem_set(&mem.task[i], mem.task[tmpj], tmpn);  // 标记为已用块
+                j = mem.tbl[i] - tmpn;                              // 切分原空闲块, 记录切分后的大小
+                ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);             // 设置已用内存块大小
+                for (search = idle.next; search->name < mem.task[tmpj];) {
+                    search = search->next;
                 }
+                if (search->name == mem.task[tmpj]) search->mem = i;              // 重映射关联地址
+                ezprv_mem_set(&mem.task[tmpj], EZOS_TASK_NAME_END | 0xFF, tmpn);  // 标记为空闲块
+                ezprv_mem_set(&mem.tbl[tmpj], tmpn, tmpn);
+                i += tmpn;                                             // 剩余的空闲块起始位置
+                tmpn = j;                                              // 剩余的空闲块数量
+                for (j += i; j < EZOS_MEM_BLK_NUM; j += mem.tbl[j]) {  // 寻找后续空闲块, 准备合并
+                    if (mem.task[j] >= EZOS_TASK_NAME_END) {
+                        tmpn += mem.tbl[j];
+                    } else {
+                        break;
+                    }
+                }
+                ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);  // 合并空闲块
+                continue;                                // 对切分出的空闲块, 直接进入下一个i循环
             }
         }
+        i += mem.tbl[i];  // 下一个内存块位置
     }
 
-    for (i = 0; i < EZOS_MEM_BLK_NUM;) {                     // 二次内存整理, 顺向寻找空闲块, 顺向寻找已用块进行对齐
-        if (mem.task[i] >= EZOS_TASK_NAME_END) {             // 找到空闲内存块
-            for (j = i + mem.tbl[i];; j += mem.tbl[j]) {     // 顺向寻找已用内存块
-                if (j >= EZOS_MEM_BLK_NUM) {                 // 遍历完成, 不再有离散的已用内存块
-                    tmpn = EZOS_MEM_BLK_NUM - i;             // 整个空闲块的大小
-                    ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);  // 合并空闲块
-#if (EZOS_MEM_CLEAN != 0)
-                    ezprv_mem_set(&mem.pool[i * EZOS_MEM_BLK_SIZE], 0, mem.tbl[i] * EZOS_MEM_BLK_SIZE);
+#ifdef EZOS_MEM_SHOW
+    LOG("in mem sort\n");
+    ezos_mem_show();
 #endif
-                    return;                                     // 完成内存整理
+
+    for (i = 0; i < EZOS_MEM_BLK_NUM;) {                         // 二次内存整理, 顺向寻找空闲块, 顺向寻找已用块进行对齐
+        if (mem.task[i] >= EZOS_TASK_NAME_END) {                 // 找到空闲内存块
+            for (j = i + mem.tbl[i];; j += mem.tbl[j]) {         // 顺向寻找已用内存块
+                if (j >= EZOS_MEM_BLK_NUM) {                     // 遍历完成, 不再有离散的已用内存块
+                    tmpn = EZOS_MEM_BLK_NUM - i;                 // 整个空闲块的大小
+                    if (mem.tbl[i] != tmpn) {                    // 需要更新内存表
+                        ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);  // 合并空闲块
+                    }
+#ifdef EZOS_MEM_CLEAN
+                    ezprv_mem_set(&mem.pool[i * EZOS_MEM_BLK_SIZE], 0, tmpn * EZOS_MEM_BLK_SIZE);
+#endif
+                    i = EZOS_MEM_BLK_NUM;                       // 跳出i循环
+                    break;                                      // 完成内存整理
                 } else if (mem.task[j] < EZOS_TASK_NAME_END) {  // 找到已用内存块
+                    tmpn = mem.tbl[i];                          // 空闲块大小
                     ezprv_mem_cpy(&mem.pool[i * EZOS_MEM_BLK_SIZE], &mem.pool[j * EZOS_MEM_BLK_SIZE], mem.tbl[j] * EZOS_MEM_BLK_SIZE);
                     ezprv_mem_set(&mem.task[i], mem.task[j], mem.tbl[j]);  // 更新使用标记
                     ezprv_mem_set(&mem.tbl[i], mem.tbl[j], mem.tbl[j]);    // 覆盖掉空闲块信息
@@ -262,7 +284,6 @@ void ezos_mem_sort(void) {
                         search = search->next;
                     }
                     if (search->name == mem.task[j]) search->mem = i;              // 重映射关联地址
-                    tmpn = mem.tbl[i];                                             // 空闲块大小
                     i += mem.tbl[j];                                               // 空闲块偏移量
                     ezprv_mem_set(&mem.task[i], EZOS_TASK_NAME_END | 0xFF, tmpn);  // 标记空闲块
                     ezprv_mem_set(&mem.tbl[i], tmpn, tmpn);                        // 覆盖掉已用块信息
@@ -274,10 +295,31 @@ void ezos_mem_sort(void) {
         }
     }
 
+#ifdef EZOS_MEM_SHOW
+    LOG("after mem sort\n");
+    ezos_mem_show();
+#endif
+
 #endif /* EZOS_MEM_SORT */
 }
 
-const ezmm_map_t *ezos_mem_map(void) {
-    return &mem;
+#ifdef EZOS_MEM_SHOW
+/**
+ * \brief           动态内存显示函数, 调试观察使用
+ */
+void ezos_mem_show(void) {
+    char *data;
+
+    data = (char *)mem.pool;
+    LOG("idx, task, tbl: pool blk\n");
+    for (uint8_t i = 0; i < EZOS_MEM_BLK_NUM; i++) {
+        LOG(" %02x, %04x,  %02x: ", i, mem.task[i], mem.tbl[i]);
+        for (unsigned int j = 0; j < EZOS_MEM_BLK_SIZE; j++) {
+            LOG("%02x ", *data++);
+        }
+        LOG("\n");
+    }
 }
+#endif /* EZOS_MEM_SHOW */
+
 #endif /* EZOS_MEM */

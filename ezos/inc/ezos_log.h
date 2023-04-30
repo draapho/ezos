@@ -28,56 +28,52 @@
  *
  * Author:          draapho <draapo@gmail.com>
  * Date:            2022/10/18
+ * Date:            2023/04/30 - simplifier LOG.h
  */
 
 #ifndef EZOS_LOG_H__
 #define EZOS_LOG_H__
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-enum {  // LOG level
-    EZOS_LOG_ERROR = 0,
-    EZOS_LOG_DEBUG,
-    EZOS_LOG_WARNING,
-    EZOS_LOG_INFO,
-};
 
 /* 定义调试打印函数 */
 #define ez_printf(fmt, ...) printf(fmt, ##__VA_ARGS__)
 
 #ifdef EZOS_LOG
+#define LOG(fmt, ...) ez_printf(fmt, ##__VA_ARGS__)
 #ifndef EZOS_LOG_LEVEL
 #define EZOS_LOG_LEVEL EZOS_LOG_INFO
 #endif
-#define ezlog_line(lvl, fmt, ...) ez_printf(fmt, ##__VA_ARGS__);
 #else
-#define ezlog_line(lvl, fmt, ...)
+#define LOG(...)
+#undef EZOS_LOG_LEVEL
+#define EZOS_LOG_LEVEL -1
 #endif /* EZOS_LOG */
 
-#define LOG(fmt, ...) ezlog_line("L", fmt, ##__VA_ARGS__)
-
-#if (EZOS_LOG_LEVEL >= EZOS_LOG_INFO)
-#define LOG_I(fmt, ...) ezlog_line("I", fmt, ##__VA_ARGS__)
+#if (EZOS_LOG_LEVEL >= 3)
+#define LOG_I(fmt, ...) ez_printf("[I]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_I(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= EZOS_LOG_WARNING)
-#define LOG_W(fmt, ...) ezlog_line("W", fmt, ##__VA_ARGS__)
+#if (EZOS_LOG_LEVEL >= 2)
+#define LOG_W(fmt, ...) ez_printf("[W]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_W(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= EZOS_LOG_DEBUG)
-#define LOG_D(fmt, ...) ezlog_line("D", fmt, ##__VA_ARGS__)
+#if (EZOS_LOG_LEVEL >= 1)
+#define LOG_D(fmt, ...) ez_printf("[D]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_D(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= EZOS_LOG_ERROR)
-#define LOG_E(fmt, ...) ezlog_line("E", fmt, ##__VA_ARGS__)
+#if (EZOS_LOG_LEVEL >= 0)
+#define LOG_E(fmt, ...) ez_printf("[E]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_E(...)
 #endif
@@ -85,8 +81,7 @@ enum {  // LOG level
 /* ASSERT 宏定义 */
 #ifdef EZOS_ASSERT
 #if EZOS_ASSERT_FUN
-ezos_assert(fmt, ...) ez_printf("[Oops] " fmt, ##__VA_ARGS__)
-#define ASSERT(expr) ((expr) ? (void)0 : ezos_assert("%s at %s, L%d\n", #expr, __FUNCTION__, __LINE__)
+#define ASSERT(expr) (expr) ? (void)0 : ez_printf("[Oops] %s at %s, L%d\n", #expr, __FUNCTION__, __LINE__)
 #else
 #define ASSERT(expr)                  \
     do {                              \
@@ -94,7 +89,7 @@ ezos_assert(fmt, ...) ez_printf("[Oops] " fmt, ##__VA_ARGS__)
         while (!(expr)) {             \
             if (goahead) break;       \
         }                             \
-    } while (0);
+    } while (0)
 #endif /* EZOS_ASSERT_FUN */
 #else
 #define ASSERT(expr) ((void)0)

@@ -98,18 +98,14 @@ void shell_test_cmd(char argc, char *argv) {
 }
 
 void shell_sort_cmd(char argc, char *argv) {
-	printf("before mem sort\n");
-	show_mem();
-	ezos_mem_sort();
-	printf("after mem sort\n");
-	show_mem();
+    ezos_mem_sort();
 }
 
 const static_cmd_st static_cmd[] =
     {
         {"help", shell_help_cmd},
         {"test", shell_test_cmd},
-		{"led", led_test},
+        {"led", led_test},
         {"sort", shell_sort_cmd},
         {"add", shell_add_cmd},
         {"del", shell_del_cmd},
