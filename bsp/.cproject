@@ -46,8 +46,8 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32L1xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32L1xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
-									<listOptionValue builtIn="false" value="../../ezos/inc"/>
 									<listOptionValue builtIn="false" value="../../drv"/>
+									<listOptionValue builtIn="false" value="../../ezos"/>
 									<listOptionValue builtIn="false" value="../../lib/nr_micro_shell-master/inc"/>
 									<listOptionValue builtIn="false" value="../../task"/>
 								</option>
@@ -84,6 +84,7 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.2036686157.7970335" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.2036686157"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.694584773.1341155436" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.694584773"/>
 							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.855108444.985725700" name="Cpu clock frequence" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock.855108444"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.1953224031" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.998375963">
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.1862145830" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>

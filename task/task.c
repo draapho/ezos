@@ -11,7 +11,7 @@
 
 void ezos_handle_callback(void) {
     // LL_IWDG_ReloadCounter(IWDG); // 复位看门狗
-    if (ezos_is_done() == EZOS_OK) {
+    if (ezos_done() == EZOS_OK) {
         ;  // 如有需要, 此处可进入低功耗模式
     }
 }

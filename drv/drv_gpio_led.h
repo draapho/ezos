@@ -1,20 +1,23 @@
 ﻿/**
- * \file            drv_led.h
+ * \file            drv_gpio_led.h
  * \brief           LED driver header file. 支持可调/呼吸/闪烁效果.
  */
 
-#ifndef DRV_LED_H
-#define DRV_LED_H
+#ifndef DRV_GPIO_LED_H
+#define DRV_GPIO_LED_H
 
-#include "main.h"
+#include "drv_gpio_cfg.h"
 
 /* led config */
 #define LED_LEVEL 1   // 0, 低电平点亮LED. 1, 高电平点亮LED
 #define LED_ADVANCED  // 使能LED的高级功能, 包括闪烁和渐变效果
 
-/* X Macro: list all led */
+/* X Macro: 定义所有的LED名称和对应的GPIO口 */
+/* 推荐在 drv_gpio_cfg.h 内统一配置 */
+#ifndef DRV_LED_NAME_PORT_PIN
 #define DRV_LED_NAME_PORT_PIN \
-    X(LD2, GPIOA, GPIO_PIN_5)
+    X(LED_EXAMPLE, GPIOA, GPIO_PIN_5)
+#endif /* DRV_LED_NAME_PORT_PIN */
 
 /* typedef */
 typedef enum {
@@ -38,12 +41,12 @@ typedef enum {
 } led_status_t;
 
 /* function */
-void led_init_all(void);                           // 初始化所有的LED
-void led_init(led_name_t led_name);                // 初始化指定的LED
-void led_on(led_name_t led_name);                  // LED打开
-void led_off(led_name_t led_name);                 // LED关闭
-void led_toggle(led_name_t led_name);              // LED翻转
-led_status_t led_get_status(led_name_t led_name);  // 读取当前LED状态
+void led_init_all(void);                       // 初始化所有的LED
+void led_init(led_name_t led_name);            // 初始化指定的LED
+void led_on(led_name_t led_name);              // LED打开
+void led_off(led_name_t led_name);             // LED关闭
+void led_toggle(led_name_t led_name);          // LED翻转
+led_status_t led_status(led_name_t led_name);  // 读取当前LED状态
 
 #ifdef LED_ADVANCED
 
@@ -57,4 +60,5 @@ void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter);  // LED�
 #endif /* LED_ADVANCED */
 
 void led_test(char argc, char *argv);
-#endif /* DRV_LED_H */
+
+#endif /* DRV_GPIO_LED_H */

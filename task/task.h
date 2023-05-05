@@ -10,7 +10,9 @@
 extern "C" {
 #endif
 
-#include "drv_led.h"
+#include "drv_gpio_led.h"
+#include "drv_gpio_ctrl.h"
+#include "drv_gpio_key.h"
 #include "drv_uart.h"
 #include "ezos.h"
 #include "main.h"

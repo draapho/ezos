@@ -15,7 +15,7 @@ ezsm_t task_led(ezsm_t s, void* p) {
     EZOS_YIELD(2000);
     led_flash(LD2, 1000, 5);
     EZOS_YIELD(EZTM_AWHILE);
-    EZOS_YIELD_UNTIL(100, led_get_status(LD2) == LED_OFF);  // 等待闪烁结束
+    EZOS_YIELD_UNTIL(100, led_status(LD2) == LED_OFF);  // 等待闪烁结束
     EZOS_GOTO_BEGIN();                                      // 跳转到 EZOS_BEGIN, 形成死循环.
     EZOS_END();                                             // 必须和 EZOS_BEGIN 配对使用
 }

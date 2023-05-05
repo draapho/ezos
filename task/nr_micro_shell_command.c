@@ -101,14 +101,16 @@ void shell_sort_cmd(char argc, char *argv) {
     ezos_mem_sort();
 }
 
-const static_cmd_st static_cmd[] =
-    {
+const static_cmd_st static_cmd[] = {
         {"help", shell_help_cmd},
         {"test", shell_test_cmd},
         {"led", led_test},
+        {"ctrl", ctrl_test},
+        {"key", key_test},
         {"sort", shell_sort_cmd},
         {"add", shell_add_cmd},
         {"del", shell_del_cmd},
-        {"", NULL}};
+        {"", NULL}
+};
 
 /******************* (C) COPYRIGHT 2019 Nrush *****END OF FILE*****************/
