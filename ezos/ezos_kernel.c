@@ -399,7 +399,7 @@ const ez_task_t *ezos_self_info(void) {
  *  \arg \c         EZOS_FROZEN     任务冻结状态, 永久挂起
  *  \arg \c         EZOS_DELETED    任务删除状态 或 任务不存在
  */
-ez_status_t ezos_get_status(task_name_t name) {
+ez_status_t ezos_status(task_name_t name) {
     ez_task_t *search;
     ASSERT(name < EZOS_TASK_IDLE);
     if (name >= EZOS_TASK_IDLE) return EZOS_DELETED;
@@ -424,7 +424,7 @@ ez_status_t ezos_get_status(task_name_t name) {
  *  \arg \c         EZOS_OK     所有任务完成, 系统可进入睡眠状态
  *  \arg \c         EZOS_FAIL   任务未全部完成.
  */
-ez_err_t ezos_is_done(void) {
+ez_err_t ezos_done(void) {
     ez_task_t *search;
     ez_err_t result = EZOS_OK;
 

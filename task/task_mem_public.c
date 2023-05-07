@@ -2,6 +2,12 @@
 
 // 全局动态内存终端测试.
 /*
+清空指令: 测试前先清空!
+del mem0
+del mem1
+del mem2
+del malloc
+
 终端测试1:
 add malloc memtest  // 申请 / 更新全局动态内存
 add show            // 读取指定的动态内存

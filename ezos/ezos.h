@@ -126,8 +126,8 @@ void ezos_schedule(void);                      // 任务调度, main函数的最
 ez_err_t ezos_add(task_name_t name, void* para);  // 添加任务
 ez_err_t ezos_delay(eztm_t time_ms);              // 当前任务等待, 单位ms
 ez_err_t ezos_delete(task_name_t name);           // 删除任务, 用户一般不使用, 而是让任务运行完后自动删除
-ez_err_t ezos_is_done(void);                      // 判断所有任务是否执行完成, 可用于辅助判断系统是否可以进入睡眠状态
-ez_status_t ezos_get_status(task_name_t name);    // 获取任务状态
+ez_err_t ezos_done(void);                      // 判断所有任务是否执行完成, 可用于辅助判断系统是否可以进入睡眠状态
+ez_status_t ezos_status(task_name_t name);    // 获取任务状态
 task_name_t ezos_self_name(void);                 // 获取当前任务的名称
 const ez_task_t* ezos_self_info(void);            // 获取当前任务的指针
 

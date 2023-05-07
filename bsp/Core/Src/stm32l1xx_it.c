@@ -184,11 +184,11 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-	ezos_tick_irq();
+  ezos_tick_irq();
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-	led_scan_1ms();
+  led_scan_1ms();
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -205,7 +205,7 @@ void SysTick_Handler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-	EZOS_UART_IRQHandler(&UART_MCU);
+  uart_handle_irq(&UART_MCU);
   /* USER CODE END USART2_IRQn 0 */
   /* USER CODE BEGIN USART2_IRQn 1 */
 

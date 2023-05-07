@@ -81,7 +81,7 @@ extern "C" {
 /* ASSERT 宏定义 */
 #ifdef EZOS_ASSERT
 #if EZOS_ASSERT_FUN
-#define ASSERT(expr) (expr) ? (void)0 : ez_printf("[Oops] %s at %s, L%d\n", #expr, __FUNCTION__, __LINE__)
+#define ASSERT(expr) (expr) ? (void)0 : ez_printf("[Oops] %s at %s, L%d\r\n", #expr, __FUNCTION__, __LINE__)
 #else
 #define ASSERT(expr)                  \
     do {                              \
