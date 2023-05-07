@@ -44,7 +44,7 @@ extern "C" {
 /* typedef */
 typedef enum {
 #define X(name, ...) name,  // 提取任务名称, 按优先级排列
-    EZOS_TASKS_NAME_FUN_STR
+    EZOS_TASKS_NAME_FUN_CMD
 #undef X
         EZOS_TASK_IDLE,  // 系统空闲任务为最低优先级
     EZOS_TASK_NAME_END,  // 系统任务列表数量
@@ -113,7 +113,7 @@ typedef struct {                // 性能测试类型定义
 
 /* generate task function */
 #define X(name, task, ...) ezsm_t(task)(ezsm_t s, void* p);  // 生成任务函数
-EZOS_TASKS_NAME_FUN_STR
+EZOS_TASKS_NAME_FUN_CMD
 #undef X
 
 /* function */

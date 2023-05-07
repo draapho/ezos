@@ -59,7 +59,7 @@ ezsm_t task_malloc(ezsm_t s, void *p) {
             mem_ptr = self_malloc(5 + strlen(p));  // 申请动态内存
             snprintf(mem_ptr, len, "%02d, %s", s, (char *)p);
             if (mem_ptr == NULL) return EZSM_ERROR;
-            printf("task_malloc mem success\n");
+            printf("task_malloc mem success\r\n");
             ezos_mem_show();
             return ++s;
         }
@@ -72,7 +72,7 @@ ezsm_t task_malloc(ezsm_t s, void *p) {
             if (++s > 99) s = 1;
             return s;
         case EZSM_ERROR:
-            printf("task_malloc failed to get mem ptr\n");
+            printf("task_malloc failed to get mem ptr\r\n");
             return EZSM_DONE;
     }
 }
@@ -80,10 +80,10 @@ ezsm_t task_malloc(ezsm_t s, void *p) {
 ezsm_t task_show(ezsm_t s, void *p) {           // 该任务使用全局动态内存, 并最后释放它.
     char *mem_ptr = ezos_mem_get(TASK_MALLOC);  // 获取全局变量
     if (mem_ptr == NULL) {
-        printf("task_show failed to get mem ptr\n");
+        printf("task_show failed to get mem ptr\r\n");
         return EZSM_DONE;
     } else {
-        printf("task_show: %s\n", mem_ptr);
+        printf("task_show: %s\r\n", mem_ptr);
         if (!strcmp("free", (char *)p)) {
             ezos_free(TASK_MALLOC);  // 释放指定动态内存
         }

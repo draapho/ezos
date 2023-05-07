@@ -11,20 +11,20 @@ ezsm_t task_hello(ezsm_t s, void *p) {
             if (p == NULL) {
                 return EZSM_ERROR;
             } else {
-                printf("hello, %s\n", (char *)p);
+                printf("hello, %s\r\n", (char *)p);
                 ezos_delay(5000);
                 return ++s;  // 进入下一个状态, 就是 case 1
             }
         case 1:
-            printf("%s, welcome to task %d\n", (char *)p, ezos_self_name());
+            printf("%s, welcome to task %d\r\n", (char *)p, ezos_self_name());
             ezos_delay(5000);
             return EZSM_DEINIT;
         case EZSM_DEINIT:
-            printf("goodbye, %s\n", (char *)p);
+            printf("goodbye, %s\r\n", (char *)p);
             return EZSM_DONE;  // 任务结束, 将自动删除该任务
         default:
         case EZSM_ERROR:  // 错误处理
-            printf("nothing to say with nameless\n");
+            printf("nothing to say with nameless\r\n");
             return EZSM_DONE;
     }
 }

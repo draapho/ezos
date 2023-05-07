@@ -47,10 +47,10 @@ void ipc_test_init(void) {
 
 ezsm_t task_ipc(ezsm_t s, void *p) {
     if (p == NULL) {
-        printf("releas sem\n");
+        printf("releas sem\r\n");
         ezos_sem_release(&sem);
     } else {
-        printf("send mq: %s\n", (char *)p);
+        printf("send mq: %s\r\n", (char *)p);
         ezos_mq_send(&mq, p);
     }
     return EZSM_DONE;
@@ -59,17 +59,17 @@ ezsm_t task_ipc(ezsm_t s, void *p) {
 ezsm_t task_sem(ezsm_t s, void *p) {
     switch (s) {
         case EZSM_INIT:
-            printf("wait sem\n");
+            printf("wait sem\r\n");
             ezos_delay_awhile();
             return ++s;
         case 1: {
             ez_err_t err;
             err = ezos_sem_take(&sem, 1000);  // 等待信号量, 1s后超时
             if (err == EZOS_OK) {             // 成功获取
-                printf("done, take sem in 1 sec\n");
+                printf("done, take sem in 1 sec\r\n");
                 return EZSM_DONE;
             } else if (err == EZOS_ERR_OVER) {  // 超时处理
-                printf("failed, overtime. now wait forever\n");
+                printf("failed, overtime. now wait forever\r\n");
                 ezos_delay(1000);
                 return ++s;
             } else {
@@ -80,7 +80,7 @@ ezsm_t task_sem(ezsm_t s, void *p) {
             ez_err_t err;
             err = ezos_sem_take(&sem, EZTM_FOREVER);  // 永久等待信号量
             if (err == EZOS_OK) {                     // 成功获取
-                printf("done, take sem at last\n");
+                printf("done, take sem at last\r\n");
                 return EZSM_DONE;
             } else {
                 return s;
@@ -94,7 +94,7 @@ ezsm_t task_sem(ezsm_t s, void *p) {
 ezsm_t task_mq(ezsm_t s, void *p) {
     switch (s) {
         case EZSM_INIT:
-            printf("wait mq\n");
+            printf("wait mq\r\n");
             ezos_delay_awhile();
             return ++s;
         case 1: {
@@ -103,7 +103,7 @@ ezsm_t task_mq(ezsm_t s, void *p) {
 
             err = ezos_mq_receive(&mq, msg_buf, EZTM_FOREVER);  // 永久等待消息队列
             if (err == EZOS_OK) {                               // 成功获取
-                printf("done, got mq: %s\n", msg_buf);
+                printf("done, got mq: %s\r\n", msg_buf);
                 return EZSM_DONE;
             } else {
                 return s;

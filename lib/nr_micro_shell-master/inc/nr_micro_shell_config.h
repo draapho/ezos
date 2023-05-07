@@ -40,12 +40,11 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 
-#ifndef PKG_USING_NR_MICRO_SHELL
 /* ANSI command line buffer size. */
 #define NR_ANSI_LINE_SIZE 100
 
 /* Maximum user name length. */
-#define NR_SHELL_USER_NAME_MAX_LENGTH 30
+#define NR_SHELL_USER_NAME_MAX_LENGTH 8
 
 /* Maximum command name length. */
 #define NR_SHELL_CMD_NAME_MAX_LENGTH 10
@@ -54,38 +53,35 @@ extern "C" {
 #define NR_SHELL_CMD_LINE_MAX_LENGTH NR_ANSI_LINE_SIZE
 
 /* The maximum number of parameters in the command. */
-#define NR_SHELL_CMD_PARAS_MAX_NUM 5
+#define NR_SHELL_CMD_PARAS_MAX_NUM 3
 
 /* Command stores the most history commands (the maximum number here refers to the maximum number of commands that can be stored. When the history command line cache is full, it will automatically release the earliest command record) */
 #define NR_SHELL_MAX_CMD_HISTORY_NUM 3
 
 /* History command cache length */
-#define NR_SHELL_CMD_HISTORY_BUF_LENGTH 20
+#define NR_SHELL_CMD_HISTORY_BUF_LENGTH 30
 
 /* The user's name. */
-#define NR_SHELL_USER_NAME ""
+#define NR_SHELL_USER_NAME ">"
 
 /*
 0: \n
 1: \r
 2: \r\n
 */
-#define NR_SHELL_END_OF_LINE 0
+#define NR_SHELL_END_OF_LINE 1
 
 /* Weather the terminal support all ANSI codes. */
-#define NR_SHLL_FULL_ANSI 1
+#define NR_SHLL_FULL_ANSI 0
 
 /* Show logo or not. */
 #define NR_SHELL_SHOW_LOG
 
-// /* Use NR_SHELL_CMD_EXPORT() or not */
-// #define NR_SHELL_USING_EXPORT_CMD
-
 /* If you use RTOS, you may need to do some special processing for printf(). */
-#define shell_printf(fmt, args...) printf(fmt, ##args);
-#define ansi_show_char(x) putchar(x)
+#include <stdio.h>
 
-#endif
+#define shell_printf(fmt, args...) printf(fmt, ##args)
+#define ansi_show_char(x) putchar(x)
 
 #ifdef __cplusplus
 }

@@ -216,7 +216,7 @@ void ezos_mem_sort(void) {
     ez_task_t *search;
 
 #ifdef EZOS_MEM_SHOW
-    LOG("before mem sort\n");
+    LOG("before mem sort\r\n");
     ezos_mem_show();
 #endif
 
@@ -259,7 +259,7 @@ void ezos_mem_sort(void) {
     }
 
 #ifdef EZOS_MEM_SHOW
-    LOG("in mem sort\n");
+    LOG("in mem sort\r\n");
     ezos_mem_show();
 #endif
 
@@ -297,7 +297,7 @@ void ezos_mem_sort(void) {
     }
 
 #ifdef EZOS_MEM_SHOW
-    LOG("after mem sort\n");
+    LOG("after mem sort\r\n");
     ezos_mem_show();
 #endif
 
@@ -312,13 +312,13 @@ void ezos_mem_show(void) {
     char *data;
 
     data = (char *)mem.pool;
-    LOG("idx, task, tbl: pool blk\n");
+    LOG("idx, task, tbl: pool blk\r\n");
     for (uint8_t i = 0; i < EZOS_MEM_BLK_NUM; i++) {
         LOG(" %02x, %04x,  %02x: ", i, mem.task[i], mem.tbl[i]);
         for (unsigned int j = 0; j < EZOS_MEM_BLK_SIZE; j++) {
             LOG("%02x ", *data++);
         }
-        LOG("\n");
+        LOG("\r\n");
     }
 }
 #endif /* EZOS_MEM_SHOW */

@@ -345,9 +345,9 @@ void led_test(char argc, char *argv) {
     } else if (!strcmp("toggle", fun)) {
         led_toggle(name);
     } else if (!strcmp("level", fun)) {
-        printf("led level:%ld\n", LED_PORT_LEVEL(name));
+        printf("led level:%ld\r\n", LED_PORT_LEVEL(name));
     } else {
-    	printf("cmd err\n");
+    	printf("cmd err\r\n");
     }
 }
 #endif /* DRV_TEST */

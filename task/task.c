@@ -64,7 +64,7 @@ ezsm_t task_shell(ezsm_t s, void *p) {
         }
         default:
         case EZSM_ERROR:  // 错误处理, 这里其实没用到
-            LOG("task_shell err\n");
+            LOG("task_shell err\r\n");
             return EZSM_DONE;
     }
 }

@@ -39,20 +39,21 @@
 
 const char task_str[EZOS_TASK_NAME_END][20] = {
 #define X(name, task, str, ...) str,  // 提取任务字符串, 按优先级排列
-    EZOS_TASKS_NAME_FUN_STR
+    EZOS_TASKS_NAME_FUN_CMD
 #undef X
 };
 
 void shell_help_cmd(char argc, char *argv) {
     unsigned int i = 0;
+
     for (i = 0; nr_shell.static_cmd[i].fp != NULL; i++) {
         shell_printf("%s", nr_shell.static_cmd[i].cmd);
-        shell_printf("\n");
+        shell_printf("\r\n");
     }
-    shell_printf("add or del [task_name], support following [task_name]\n");
+    shell_printf("add or del [task_name], support following [task_name]\r\n");
     for (i = 0; i < EZOS_TASK_NAME_END; i++) {
         if (strcmp("", task_str[i])) {
-            shell_printf("  %s\n", task_str[i]);
+            shell_printf("  %s\r\n", task_str[i]);
         }
     }
 }
@@ -73,7 +74,7 @@ void shell_add_cmd(char argc, char *argv) {
             }
         }
     }
-    shell_printf("unknow task to add\n");
+    shell_printf("unknow task to add\r\n");
 }
 
 void shell_del_cmd(char argc, char *argv) {
@@ -86,14 +87,14 @@ void shell_del_cmd(char argc, char *argv) {
             }
         }
     }
-    shell_printf("unknow task to del\n");
+    shell_printf("unknow task to del\r\n");
 }
 
 void shell_test_cmd(char argc, char *argv) {
     unsigned int i;
-    shell_printf("test command:\n");
+    shell_printf("test command:\r\n");
     for (i = 0; i < argc; i++) {
-        shell_printf("paras %d: %s\n", i, &(argv[(uint8_t)argv[i]]));
+        shell_printf("paras %d: %s\r\n", i, &(argv[(uint8_t)argv[i]]));
     }
 }
 

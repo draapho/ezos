@@ -32,7 +32,7 @@ ezsm_t task_mems(ezsm_t s, void *p) {
             mem_ptr = self_malloc(num);  // 申请动态内存
             if (mem_ptr == NULL) return EZSM_ERROR;
 
-            printf("mem task and index:%02x,%02x\n", cur->name, cur->mem);
+            printf("mem task and index:%02x,%02x\r\n", cur->name, cur->mem);
             memset(mem_ptr, cur->name, num);  // 动态内存全部写入内存名称值
             ezos_delay(100);
             return ++s;
@@ -43,11 +43,11 @@ ezsm_t task_mems(ezsm_t s, void *p) {
             mem_ptr = ezos_malloc(ezos_self_name(), 0, &size);  // 读取动态内存和大小
             if (mem_ptr == NULL) return EZSM_ERROR;
 
-            printf("mem content:\n");
+            printf("mem content:\r\n");
             for (i = 0; i < size; i++) {
                 printf("%02x ", *mem_ptr++);
             }
-            printf("\n");
+            printf("\r\n");
             ezos_delay(100);
             return ++s;
         }
@@ -57,7 +57,7 @@ ezsm_t task_mems(ezsm_t s, void *p) {
             return s;
         }
         case EZSM_ERROR:
-            printf("ezos_malloc failed\n");
+            printf("ezos_malloc failed\r\n");
         default:
             return EZSM_DONE;
     }
