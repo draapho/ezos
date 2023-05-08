@@ -7,6 +7,7 @@
 #ifndef DRV_UART_H
 #define DRV_UART_H
 
+#include <stdint.h>
 #include <string.h>
 
 #include "main.h"

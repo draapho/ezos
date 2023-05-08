@@ -22,14 +22,16 @@ void system_init(void) {
     ezos_set_idle_hook(ezos_handle_callback);  // 设置闲时任务钩子函数
 
     uart_buff_init_all();
-    led_init_all();
     ipc_test_init();
+    led_init_all();
+    key_init_all();
+    ctrl_init_all();
 
     task_add(TASK_SHELL);
     task_add(TASK_LED);
     ezos_add(TASK_HELLO, &"Jack");  // 同一个任务函数 task_hello, 可以有两个不同的任务实例.
     ezos_add(TASK_HELLO_1, &"Mary");
-    // 更多范例请用终端命令调用, 格式 add [task_str]
+    // 更多范例请用终端命令调用, 格式 add [task_cmd]
 
     // 多层状态机范例
     // task_add(TASK_HSM);

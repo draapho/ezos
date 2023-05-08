@@ -56,7 +56,7 @@ extern void ezprv_mem_free(uint8_t i);
 // 任务函数数组
 static const ezsm_t (*task_pfun[EZOS_TASK_NAME_END])(ezsm_t, void *) = {
 #define X(name, task, ...) task,  // 与任务名称的enum值相对应
-    EZOS_TASKS_NAME_FUN_CMD
+    EZOS_TASKS_NAME_FUN
 #undef X
         ezos_task_idle,  // 对应 EZOS_TASK_IDLE
 };

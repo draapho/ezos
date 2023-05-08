@@ -16,15 +16,15 @@
 #include "main.h"      // for port and pin type
 
 /* CTRL config: 定义所有的控制端口, 对应的GPIO口, 以及打开电平 */
-#define DRV_CTRL_NAME_PORT_PIN_ON \
+#define DRV_CTRL_NAME_GPIO_ON \
     X(LED, GPIOA, LL_GPIO_PIN_5, 1)
 
 /* KEY config: 定义所有的按键名称和对应的GPIO口 */
-#define DRV_KEY_NAME_PORT_PIN \
+#define DRV_KEY_NAME_GPIO \
     X(B1, GPIOC, LL_GPIO_PIN_13)
 
 /* LED config: 定义所有的LED名称和对应的GPIO口 */
-#define DRV_LED_NAME_PORT_PIN \
+#define DRV_LED_NAME_GPIO \
     X(LD2, GPIOA, LL_GPIO_PIN_5)
 
 /* test config */
@@ -61,8 +61,8 @@ __STATIC_INLINE uint32_t drv_input_level(const gpio_hw_t *io) {
     return ((GPIO_TypeDef *)(io->port))->IDR & io->pin;
 }
 
-// 初始化为输出口
-__STATIC_INLINE void drv_output_init(const gpio_hw_t *io) {
+// 初始化为推挽输出口
+__STATIC_INLINE void drv_output_pp_init(const gpio_hw_t *io) {
     // GPIO_InitTypeDef gpio = {0};
     // gpio.Pin = io->pin;
     // gpio.Mode = GPIO_MODE_OUTPUT_PP;
@@ -72,6 +72,24 @@ __STATIC_INLINE void drv_output_init(const gpio_hw_t *io) {
     gpio.Pin = io->pin;
     gpio.Mode = LL_GPIO_MODE_OUTPUT;
     gpio.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+}
+
+// 初始化为开漏输出口
+__STATIC_INLINE void drv_output_od_init(const gpio_hw_t *io) {
+    // GPIO_InitTypeDef gpio = {0};
+    // gpio.Pin = io->pin;
+    // gpio.Mode = GPIO_MODE_OUTPUT_OD;
+    // gpio.Pull = GPIO_NOPULL;  // 已有外部上拉
+    // // gpio.Pull = GPIO_PULLUP;  // 使用内部上拉
+    // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+
+    LL_GPIO_InitTypeDef gpio = {0};
+    gpio.Pin = io->pin;
+    gpio.Mode = LL_GPIO_MODE_OUTPUT;
+    gpio.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
+    gpio.Pull = LL_GPIO_PULL_NO;  // 已有外部上拉
+    // gpio.Pull = LL_GPIO_PULL_UP;  // 使用内部上拉
     LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
 }
 

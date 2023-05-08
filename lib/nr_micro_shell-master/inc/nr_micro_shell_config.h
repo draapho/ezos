@@ -31,14 +31,14 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __nr_micro_shell_config_h
-#define __nr_micro_shell_config_h
+#ifndef __NR_MICRO_SHELL_CONFIG_H
+#define __NR_MICRO_SHELL_CONFIG_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+/* Config --------------------------------------------------------------------*/
 
 /* ANSI command line buffer size. */
 #define NR_ANSI_LINE_SIZE 100

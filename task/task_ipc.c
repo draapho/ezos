@@ -110,6 +110,6 @@ ezsm_t task_mq(ezsm_t s, void *p) {
             }
         }
         default:
-        	return EZSM_DONE;
+            return EZSM_DONE;
     }
 }

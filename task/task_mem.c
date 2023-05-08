@@ -10,18 +10,18 @@ del mem1
 del mem2
 
 终端测试1:
-add mem0 20     // mem0 申请20个字节的内存
-add mem1 64     // mem1 申请64个字节的内存
+force mem0 20     // mem0 申请20个字节的内存
+force mem1 64     // mem1 申请64个字节的内存
 del mem0		// 释放 mem0
 sort			// 整理并打印动态内存
-add mem2 64		// mem2 申请动态内存.
+force mem2 64		// mem2 申请动态内存.
 
 终端测试2:
-add mem0 1
-add mem1 2
-add mem2 3
+force mem0 1
+force mem1 2
+force mem2 3
 del mem0
-add mem0 24
+force mem0 24
 del mem2
 sort
 */

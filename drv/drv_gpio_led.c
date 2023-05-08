@@ -8,13 +8,13 @@
 /* led porting */
 static const gpio_hw_t led_hw[DRV_LED_NAME_END] = {  // LED硬件映射表
 #define X(name, port, pin) {port, pin},
-    DRV_LED_NAME_PORT_PIN
+    DRV_LED_NAME_GPIO
 #undef X
 };
 
 // LED IO口初始化
 __STATIC_INLINE void led_port_init(led_name_t led_name) {
-    drv_output_init(&led_hw[led_name]);
+    drv_output_pp_init(&led_hw[led_name]);
 }
 
 // LED IO口电平置高
@@ -63,11 +63,13 @@ static led_para_t led_para[DRV_LED_NAME_END];
 
 /* function */
 void led_init_all(void) {
-    for (uint8_t i = 0; i < DRV_LED_NAME_END; i++)
+    uint8_t i;
+    for (i = 0; i < DRV_LED_NAME_END; i++)
         led_init((led_name_t)i);
 }
 
 void led_init(led_name_t led_name) {
+    ASSERT(led_name < DRV_LED_NAME_END);
     if (led_name < DRV_LED_NAME_END) {
         led_port_init(led_name);
         led_off(led_name);
@@ -277,10 +279,11 @@ void led_scan_1ms(void) {
  * 测试指令: led_test [init/on/off/toggle/flash/status] [0/1/2/ <DRV_LED_NAME_END]
  */
 void led_test(char argc, char *argv) {
+    uint8_t i;
     char fun[TEST_ARGV_LEN_MAX] = "init", para[TEST_ARGV_LEN_MAX] = "0";  // 设定默认值
     led_name_t name;
 
-    for (uint8_t i = 1; i < argc; i++) {  // 提取指令
+    for (i = 1; i < argc; i++) {  // 提取指令
         if (i == 1)
             snprintf(fun, TEST_ARGV_LEN_MAX, &(argv[(uint8_t)argv[i]]));
         else if (i == 2)
@@ -299,13 +302,11 @@ void led_test(char argc, char *argv) {
         led_off(name);
     } else if (!strcmp("toggle", fun)) {
         led_toggle(name);
-    } else if (!strcmp("flash", fun)) {
-        led_flash(name, 500, 5);
 #else
     } else if (!strcmp("on", fun)) {
-        bled_on(name);
+        led_on(name);
     } else if (!strcmp("off", fun)) {
-        bled_off(name);
+        led_off(name);
     } else if (!strcmp("toggle", fun)) {
         bled_toggle(name);
     } else if (!strcmp("flash", fun)) {

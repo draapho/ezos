@@ -8,7 +8,7 @@
 /* key porting */
 static const gpio_hw_t key_hw[DRV_KEY_NAME_END] = {  // 按键硬件映射表
 #define X(name, port, pin) {port, pin},
-    DRV_KEY_NAME_PORT_PIN
+    DRV_KEY_NAME_GPIO
 #undef X
 };
 
@@ -27,16 +27,17 @@ volatile key_event_t key_event = {0};  // 按键状态变量
 
 /* function */
 void key_init_all(void) {
+    uint8_t i;
     ASSERT(DRV_KEY_NAME_END <= (sizeof(keyint_t) << 3));  // 定义的按键数量不得超过keyint_t的bit数量
 
     key_clear_all();
-    for (uint8_t i = 0; i < DRV_KEY_NAME_END; i++)
+    for (i = 0; i < DRV_KEY_NAME_END; i++)
         key_init((key_name_t)i);
 }
 
 void key_init(key_name_t key_name) {
     ASSERT(key_name < (sizeof(keyint_t) << 3));  // 定义的按键数量不得超过keyint_t的bit数量
-
+    ASSERT(key_name < DRV_KEY_NAME_END);
     if (key_name < DRV_KEY_NAME_END) {
         key_port_init(key_name);
     }
@@ -148,9 +149,10 @@ void task_key_example(char argc, char *argv) {
  * 测试指令: key_test [init/scan]
  */
 void key_test(char argc, char *argv) {
+    uint8_t i;
     char fun[TEST_ARGV_LEN_MAX] = "init";  // 设定默认值
 
-    for (uint8_t i = 1; i < argc; i++) {  // 提取指令
+    for (i = 1; i < argc; i++) {  // 提取指令
         if (i == 1)
             snprintf(fun, TEST_ARGV_LEN_MAX, &(argv[(uint8_t)argv[i]]));
     }

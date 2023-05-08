@@ -14,17 +14,17 @@
 
 /* X Macro: 定义所有的LED名称和对应的GPIO口 */
 /* 推荐在 drv_gpio_cfg.h 内统一配置 */
-#ifndef DRV_LED_NAME_PORT_PIN
-#define DRV_LED_NAME_PORT_PIN \
+#ifndef DRV_LED_NAME_GPIO
+#define DRV_LED_NAME_GPIO \
     X(LED_EXAMPLE, GPIOA, GPIO_PIN_5)
-#endif /* DRV_LED_NAME_PORT_PIN */
+#endif /* DRV_LED_NAME_GPIO */
 
 /* typedef */
 typedef enum {
 #define X(name, ...) name,
-    DRV_LED_NAME_PORT_PIN
+    DRV_LED_NAME_GPIO
 #undef X
-        DRV_LED_NAME_END
+        DRV_LED_NAME_END,
 } led_name_t;
 
 typedef enum {
@@ -58,7 +58,5 @@ void bled_toggle(led_name_t led_name);                                   // LED�
 void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter);  // LED闪烁指定次数, counter=0 表示一直闪烁
 
 #endif /* LED_ADVANCED */
-
-void led_test(char argc, char *argv);
 
 #endif /* DRV_GPIO_LED_H */

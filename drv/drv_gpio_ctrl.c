@@ -13,13 +13,13 @@ typedef struct {
 
 static const ctrl_hw_t ctrl_hw[DRV_CTRL_NAME_END] = {  // 控制端口硬件映射表
 #define X(name, port, pin, on) {{port, pin}, on},
-    DRV_CTRL_NAME_PORT_PIN_ON
+    DRV_CTRL_NAME_GPIO_ON
 #undef X
 };
 
 // 控制端口初始化
 __STATIC_INLINE void ctrl_port_init(ctrl_name_t ctrl_name) {
-    drv_output_init(&ctrl_hw[ctrl_name].io);
+    drv_output_pp_init(&ctrl_hw[ctrl_name].io);
 }
 
 // 控制端口电平置高
@@ -44,11 +44,13 @@ __STATIC_INLINE uint32_t ctrl_port_level(ctrl_name_t ctrl_name) {
 
 /* function */
 void ctrl_init_all(void) {
-    for (uint8_t i = 0; i < DRV_CTRL_NAME_END; i++)
+    uint8_t i;
+    for (i = 0; i < DRV_CTRL_NAME_END; i++)
         ctrl_init((ctrl_name_t)(i));
 }
 
 void ctrl_init(ctrl_name_t ctrl_name) {
+    ASSERT(ctrl_name < DRV_CTRL_NAME_END);
     if (ctrl_name < DRV_CTRL_NAME_END) {
         ctrl_port_init(ctrl_name);
         ctrl_off(ctrl_name);
@@ -93,10 +95,11 @@ uint8_t ctrl_status(ctrl_name_t ctrl_name) {
  * 测试指令: ctrl_test [init/on/off/toggle/status] [0/1/2/ <DRV_CTRL_NAME_END]
  */
 void ctrl_test(char argc, char *argv) {
+    uint8_t i;
     char fun[TEST_ARGV_LEN_MAX] = "init", para[TEST_ARGV_LEN_MAX] = "0";  // 设定默认值
     ctrl_name_t name;
 
-    for (uint8_t i = 1; i < argc; i++) {  // 提取指令
+    for (i = 1; i < argc; i++) {  // 提取指令
         if (i == 1)
             snprintf(fun, TEST_ARGV_LEN_MAX, &(argv[(uint8_t)argv[i]]));
         else if (i == 2)

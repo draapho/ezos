@@ -62,21 +62,21 @@ typedef int16_t ezsm_t;  // State Machine, 任务状态机类型, 必须是有�
 #define EZOS_LOG_LEVEL 3  // 定义调试级别. 0-ERROR, 1-DEBUG, 2-WARNING, 3-INFO, 默认值: 3
 
 /* X Macro: 请将任务按优先级从高到低进行X宏定义 */
-/* 最后的字符串用于终端指令, 不用终端可以全部省略 */
+/* 最后的字符串和描述用于终端指令, 不用终端可以全部省略 */
 /* 使能 EZOS_MEM 支持动态内存时, 最多253个任务 */
-#define EZOS_TASKS_NAME_FUN_CMD           \
-    X(TASK_SHELL, task_shell, "")         \
-    X(TASK_LED, task_led, "led")          \
-    X(TASK_HELLO, task_hello, "hello")    \
-    X(TASK_HELLO_1, task_hello, "")       \
-    X(TASK_HSM, task_hsm, "hsm")          \
-    X(TASK_IPC, task_ipc, "ipc")          \
-    X(TASK_WAIT_SEM, task_sem, "sem")     \
-    X(TASK_WAIT_MQ, task_mq, "mq")        \
-    X(TASK_MEM0, task_mems, "mem0")       \
-    X(TASK_MEM1, task_mems, "mem1")       \
-    X(TASK_MEM2, task_mems, "mem2")       \
-    X(TASK_MALLOC, task_malloc, "malloc") \
-    X(TASK_SHOW, task_show, "show")
+#define EZOS_TASKS_NAME_FUN     \
+    X(TASK_SHELL, task_shell)   \
+    X(TASK_LED, task_led)       \
+    X(TASK_HELLO, task_hello)   \
+    X(TASK_HELLO_1, task_hello) \
+    X(TASK_HSM, task_hsm)       \
+    X(TASK_IPC, task_ipc)       \
+    X(TASK_WAIT_SEM, task_sem)  \
+    X(TASK_WAIT_MQ, task_mq)    \
+    X(TASK_MEM0, task_mems)     \
+    X(TASK_MEM1, task_mems)     \
+    X(TASK_MEM2, task_mems)     \
+    X(TASK_MALLOC, task_malloc) \
+    X(TASK_SHOW, task_show)
 
 #endif /* EZOS_CFG_H__ */

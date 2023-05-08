@@ -23,18 +23,18 @@ typedef uint16_t keyint_t;      // 数据类型的bit数, 确定了按键数量�
 
 /* X Macro: 定义所有的KEY名称和对应的GPIO口 */
 /* 推荐在 drv_gpio_cfg.h 内统一配置 */
-#ifndef DRV_KEY_NAME_PORT_PIN
-#define DRV_KEY_NAME_PORT_PIN \
+#ifndef DRV_KEY_NAME_GPIO
+#define DRV_KEY_NAME_GPIO \
     X(KEY_EXAMPLE, GPIOC, GPIO_PIN_13)
-#endif /* DRV_KEY_NAME_PORT_PIN */
+#endif /* DRV_KEY_NAME_GPIO */
 
 /* typedef */
 typedef enum {
 #define X(name, ...) name,
-    DRV_KEY_NAME_PORT_PIN
+    DRV_KEY_NAME_GPIO
 #undef X
         DRV_KEY_NAME_END,
-    DRV_KEY_ALL = DRV_KEY_NAME_END
+    DRV_KEY_ALL = DRV_KEY_NAME_END,
 } key_name_t;
 
 typedef struct
@@ -79,9 +79,9 @@ typedef struct
 volatile extern key_event_t key_event;
 
 /* function */
-void key_init_all(void);                                            // 初始化所有按键
-void key_init(key_name_t key_name);                                 // 初始化指定按键
-void key_scan(void);                                                // 按键扫描函数, 建议放在高优先级任务中. 调用周期和 KEY_SCAN_TICK_MS 基本一致.
+void key_init_all(void);             // 初始化所有按键
+void key_init(key_name_t key_name);  // 初始化指定按键
+void key_scan(void);                 // 按键扫描函数, 建议放在高优先级任务中. 调用周期和 KEY_SCAN_TICK_MS 基本一致.
 
 __STATIC_INLINE keyint_t key_get(volatile keyint_t *event, key_name_t key_name) {
     return *event & KEY_MASK(key_name);
@@ -103,7 +103,5 @@ __STATIC_INLINE keyint_t key_clear(volatile keyint_t *event, key_name_t key_name
 __STATIC_INLINE void key_clear_all(void) {
     memset((void *)&key_event, 0, sizeof(key_event));
 }
-
-void key_test(char argc, char *argv);  // 按键任务函数范例和测试函数
 
 #endif /* DRV_GPIO_KEY_H */
