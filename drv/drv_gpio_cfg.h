@@ -108,7 +108,7 @@ __STATIC_INLINE void drv_output_high(const gpio_hw_t *io) {
 // 输出口电平置低
 __STATIC_INLINE void drv_output_low(const gpio_hw_t *io) {
     ((GPIO_TypeDef *)(io->port))->BRR = io->pin;
-    // (GPIO_TypeDef *)(io->port)->BSRR = io->pin << 16 ;
+    // ((GPIO_TypeDef *)(io->port))->BSRR = io->pin << 16 ;
     // LL_GPIO_ResetOutputPin((GPIO_TypeDef *)(io->port), io->pin);
     // HAL_GPIO_WritePin((GPIO_TypeDef *)(io->port), io->pin, GPIO_PIN_RESET);
 }
