@@ -57,6 +57,9 @@ extern "C" {
     }
 */
 
+/* 阻塞式延时函数 */
+void delay_us(uint32_t us);
+
 /* check ezos configure value */
 #if (EZOS_TICK_MS <= 0)
 #error EZOS_TICK_MS error!

@@ -54,7 +54,7 @@ extern void ezprv_mem_free(uint8_t i);
 #endif /* EZOS_MEM */
 
 // 任务函数数组
-static const ezsm_t (*task_pfun[EZOS_TASK_NAME_END])(ezsm_t, void *) = {
+static ezsm_t (*const task_pfun[EZOS_TASK_NAME_END])(ezsm_t, void *) = {
 #define X(name, task, ...) task,  // 与任务名称的enum值相对应
     EZOS_TASKS_NAME_FUN
 #undef X
@@ -282,7 +282,7 @@ ez_err_t ezos_delay(eztm_t time_ms) {
     if (time_ms > 0) {
         run->status = EZOS_SUSPEND;
     } else {
-        run->status = time_ms;
+        run->status = (ez_status_t)time_ms;
     }
     ezos_enable_irq();
     return EZOS_OK;
@@ -306,7 +306,7 @@ ez_err_t ezprv_set_task(task_name_t name, eztm_t time_ms) {
     if (name >= EZOS_TASK_IDLE) return EZOS_ERROR;
 
     // 内部使用的函数, 不需要检查 time_ms
-    //     if (time_ms <= EZTM_FOREVER) time_ms = EZTM_FOREVER;
+    // if (time_ms <= EZTM_FOREVER) time_ms = EZTM_FOREVER;
     // #if (EZOS_TICK_MS > 1)
     //     else if (time_ms > 0) {
     //         if (time_ms % EZOS_TICK_MS) time_ms += EZOS_TICK_MS;
@@ -322,7 +322,7 @@ ez_err_t ezprv_set_task(task_name_t name, eztm_t time_ms) {
         if (time_ms > 0) {
             search->status = EZOS_SUSPEND;
         } else {
-            search->status = time_ms;
+            search->status = (ez_status_t)time_ms;
         }
         return EZOS_OK;
     } else {

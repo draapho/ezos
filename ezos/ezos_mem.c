@@ -140,11 +140,9 @@ void *ezos_malloc(task_name_t task, uint16_t size, uint16_t *size_got) {
             return NULL;
         }
 #else
-        break;
+        return NULL;  // 申请失败
 #endif
     }
-
-    return NULL;  // 申请失败
 }
 
 /**

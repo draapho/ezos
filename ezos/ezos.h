@@ -134,8 +134,6 @@ ez_err_t ezos_resume_irq(task_name_t name);  // 中断中恢复指定任务
 ez_err_t ezos_resume(task_name_t name);      // 恢复指定任务
 ez_err_t ezos_frozen(task_name_t name);      // 冻结指定任务
 
-void delay_us(uint32_t us);  // 阻塞式毫秒延时函数
-
 // ezos_add 的简化函数
 __STATIC_FORCEINLINE ez_err_t task_add(task_name_t name) {
     return ezos_add(name, NULL);

@@ -394,7 +394,7 @@ ez_err_t ezos_mq_send_irq(ez_mq_t *mq, void *msg) {
             task->status = EZOS_READY;  // 进入就绪状态竞争消息队列
         }
     }
-    ezprv_mem_cpy((uint8_t *)(mq->pool + mq->in), msg, mq->msg_size);  // 将消息加入到消息队列中
+    ezprv_mem_cpy((uint8_t *)(mq->pool) + mq->in, msg, mq->msg_size);  // 将消息加入到消息队列中
     mq->empty = 0;
     mq->in += mq->msg_size;
     if (mq->in >= mq->pool_size) mq->in = 0;
@@ -442,7 +442,7 @@ ez_err_t ezos_mq_receive(ez_mq_t *mq, void *msg, eztm_t timeout) {
 
     ezos_disable_irq();
     if (!mq->empty) {
-        ezprv_mem_cpy(msg, (uint8_t *)(mq->pool + mq->out), mq->msg_size);
+        ezprv_mem_cpy(msg, (uint8_t *)(mq->pool) + mq->out, mq->msg_size);
         mq->out += mq->msg_size;
         if (mq->out >= mq->pool_size) mq->out = 0;
         if (mq->in == mq->out) mq->empty = 1;
