@@ -45,11 +45,14 @@ extern "C" {
 
 #ifdef EZOS_LOG
 #define LOG(fmt, ...) ez_printf(fmt, ##__VA_ARGS__)
+extern void log_dump(char *desc, uint8_t *buf, uint16_t size);
+#define LOG_DUMP(pDesc, pBuf, size) log_dump(pDesc, pBuf, size)
 #ifndef EZOS_LOG_LEVEL
 #define EZOS_LOG_LEVEL EZOS_LOG_INFO
 #endif
 #else
 #define LOG(...)
+#define LOG_DUMP(...)
 #undef EZOS_LOG_LEVEL
 #define EZOS_LOG_LEVEL -1
 #endif /* EZOS_LOG */

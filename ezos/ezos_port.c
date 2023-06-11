@@ -67,6 +67,22 @@ int fputc(int ch, FILE *f) {
 
 #endif /* 重定向 printf */
 
+/* 调试打印内存信息 */
+#include "ezos_log.h"
+void log_dump(char *desc, uint8_t *buf, uint16_t size) {
+    int i = 0;
+    for (i = 0; i < size; i++) {
+        if ((i % 8) == 0) {
+            ez_printf("[%04x] ", (uint16_t)i);
+        }
+        ez_printf("%02x ", (uint16_t)buf[i]);
+        if (((i + 1) % 8) == 0) {
+            ez_printf("\r\n");
+        }
+    }
+    if ((i % 8) != 0) ez_printf("\r\n");
+}
+
 /* 系统微秒级延时 */
 #include <stdint.h>
 

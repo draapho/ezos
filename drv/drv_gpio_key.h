@@ -10,6 +10,7 @@
 
 /* key config */
 typedef uint16_t keyint_t;      // 数据类型的bit数, 确定了按键数量的最大值
+#define KEY_CLICK_LEVEL 0       // 0, 低电平按键触发. 1, 高电平按键触发
 #define KEY_SCAN_TICK_MS 10     // 按键扫描周期, 单位ms. 推荐 10-20ms.
 #define KEY_LONG_PRESS_MS 1300  // 长按触发时间设置, 单位ms, 经测试使用1.3S较好
 #define KEY_RUN_PRESS_MS 200    // 连发时间间隔设置, 单位ms, 经测试使用0.2s较好
@@ -81,7 +82,7 @@ volatile extern key_event_t key_event;
 /* function */
 void key_init_all(void);             // 初始化所有按键
 void key_init(key_name_t key_name);  // 初始化指定按键
-void key_scan(void);                 // 按键扫描函数, 建议放在高优先级任务中. 调用周期和 KEY_SCAN_TICK_MS 基本一致.
+void key_scan(void);                 // 按键扫描函数, 建议放在低优先级任务中. 调用周期和 KEY_SCAN_TICK_MS 基本一致.
 
 __STATIC_INLINE keyint_t key_get(volatile keyint_t *event, key_name_t key_name) {
     return *event & KEY_MASK(key_name);

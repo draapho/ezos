@@ -84,7 +84,7 @@ void led_on(led_name_t led_name) {
         led_para[led_name].destination = FLAG_LED | 0;
 #endif
 
-#if (LED_LEVEL > 0)
+#if (LED_ON_LEVEL > 0)
         led_port_high(led_name);
 #else
         led_port_low(led_name);
@@ -100,7 +100,7 @@ void led_off(led_name_t led_name) {
         led_para[led_name].destination = FLAG_LED | 0;
 #endif
 
-#if (LED_LEVEL > 0)
+#if (LED_ON_LEVEL > 0)
         led_port_low(led_name);
 #else
         led_port_high(led_name);
@@ -133,7 +133,7 @@ led_status_t led_status(led_name_t led_name) {
 
     if ((led_para[led_name].destination & FLAG_MASK) == FLAG_FLED)  // 闪烁灯
     {
-#if (LED_LEVEL > 0)
+#if (LED_ON_LEVEL > 0)
         if (led_port_level(led_name))
             return FLED_ON;
         else
@@ -143,11 +143,11 @@ led_status_t led_status(led_name_t led_name) {
             return FLED_OFF;
         else
             return FLED_ON;
-#endif /* LED_LEVEL */
+#endif /* LED_ON_LEVEL */
     }
 #endif /* LED_ADVANCED */
 
-#if (LED_LEVEL > 0)  // 普通灯
+#if (LED_ON_LEVEL > 0)  // 普通灯
     if (led_port_level(led_name))
         return LED_ON;
     else
@@ -157,7 +157,7 @@ led_status_t led_status(led_name_t led_name) {
         return LED_OFF;
     else
         return LED_ON;
-#endif /* LED_LEVEL */
+#endif /* LED_ON_LEVEL */
 }
 
 #ifdef LED_ADVANCED
@@ -204,11 +204,11 @@ void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter) {
 
 #ifdef LED_ADVANCED
         led_para[led_name].counter = FLAG_FLED | 0;                             // 设置计数器
-        led_para[led_name].dutyfactor = FLAG_FLED | (time_ms >> 1);             // 设置闪烁频率
+        led_para[led_name].dutyfactor = FLAG_FLED | (time_ms >> 1);             // 设置闪烁频率 (占空比50%)
         led_para[led_name].destination = FLAG_FLED | ((uint16_t)counter << 1);  // 设置闪烁次数
 #endif
 
-#if (LED_LEVEL > 0)
+#if (LED_ON_LEVEL > 0)
         led_port_high(led_name);
 #else
         led_port_low(led_name);
@@ -226,7 +226,7 @@ void led_scan_1ms(void) {
             continue;
         } else if ((led_para[i].destination & FLAG_MASK) == FLAG_BLED) {  // 呼吸灯
             if (++led_para[i].counter >= (FLAG_BLED | BLED_PWM_WIDTH)) {  // 新一轮PWM脉宽开始
-#if (LED_LEVEL > 0)                                                       // 关灯
+#if (LED_ON_LEVEL > 0)                                                    // 关灯
                 led_port_low((led_name_t)i);
 #else
                 led_port_high((led_name_t)i);
@@ -243,7 +243,7 @@ void led_scan_1ms(void) {
 
             temp = led_para[i].dutyfactor;
             if (led_para[i].counter == temp) {  // 占空比处翻转LED灯
-#if (LED_LEVEL > 0)                             // 开灯
+#if (LED_ON_LEVEL > 0)                          // 开灯
                 led_port_high((led_name_t)i);
 #else
                 led_port_low((led_name_t)i);
@@ -260,7 +260,7 @@ void led_scan_1ms(void) {
                         led_para[(led_name_t)i].counter = FLAG_LED | 0;
                         led_para[(led_name_t)i].dutyfactor = FLAG_LED | 0;
                         led_para[(led_name_t)i].destination = FLAG_LED | 0;
-#if (LED_LEVEL > 0)  // 关灯
+#if (LED_ON_LEVEL > 0)  // 关灯
                         led_port_low((led_name_t)i);
 #else
                         led_port_high((led_name_t)i);

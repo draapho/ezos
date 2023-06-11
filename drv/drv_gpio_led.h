@@ -9,8 +9,8 @@
 #include "drv_gpio_cfg.h"
 
 /* led config */
-#define LED_LEVEL 1   // 0, 低电平点亮LED. 1, 高电平点亮LED
-#define LED_ADVANCED  // 使能LED的高级功能, 包括闪烁和渐变效果
+#define LED_ON_LEVEL 1  // 0, 低电平点亮LED. 1, 高电平点亮LED
+#define LED_ADVANCED    // 使能LED的高级功能, 包括闪烁和渐变效果
 
 /* X Macro: 定义所有的LED名称和对应的GPIO口 */
 /* 推荐在 drv_gpio_cfg.h 内统一配置 */
@@ -55,7 +55,7 @@ void bled_set(led_name_t led_name, uint8_t level);                       // LED�
 void bled_on(led_name_t led_name);                                       // LED渐变打开
 void bled_off(led_name_t led_name);                                      // LED渐变关闭
 void bled_toggle(led_name_t led_name);                                   // LED渐变翻转
-void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter);  // LED闪烁指定次数, counter=0 表示一直闪烁
+void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter);  // LED闪烁, time_ms为闪烁周期, counter指定次数, =0 表示一直闪烁
 
 #endif /* LED_ADVANCED */
 

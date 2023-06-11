@@ -17,9 +17,13 @@ __STATIC_INLINE void key_port_init(key_name_t key_name) {
     drv_input_init(&key_hw[key_name]);
 }
 
-// 获取按键 IO口当前电平值. 0, 低电平. !0, 高电平
-__STATIC_INLINE keyint_t KEY_PORT_LEVEL(key_name_t key_name) {
-    return drv_input_level(&key_hw[key_name]);
+// 获取按键 IO口当前电平值. 按键触发电平, 返回1. 按键释放电平, 返回0.
+__STATIC_INLINE uint8_t key_port_level(key_name_t key_name) {
+#if (KEY_CLICK_LEVEL > 0)
+    return !!drv_input_level(&key_hw[key_name]);
+#else
+    return !drv_input_level(&key_hw[key_name]);
+#endif
 }
 
 /* variable */
@@ -43,7 +47,7 @@ void key_init(key_name_t key_name) {
     }
 }
 
-// 按键扫描函数, 时序要求不严格. 建议放在高优先级任务中.
+// 按键扫描函数, 时序要求不严格. 建议放在低优先级任务中.
 void key_scan(void) {
     uint8_t bit, i;
     static uint8_t key_state = 0;
@@ -52,7 +56,7 @@ void key_scan(void) {
 
     key_event.on_off = 0;
     for (i = 0; i < DRV_KEY_NAME_END; i++) {
-        bit = !KEY_PORT_LEVEL((key_name_t)i);  // 获取按键当前电平值
+        bit = !key_port_level((key_name_t)i);  // 获取按键当前电平值
         key_event.on_off |= (bit << i);        // 提取当前按键状态
     }
 
