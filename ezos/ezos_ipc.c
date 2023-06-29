@@ -39,7 +39,6 @@ extern ez_task_t idle;
 extern ez_task_t *run;
 
 /* declare function*/
-static ez_err_t prv_ipc_fail_process(void *ipc, eztm_t timeout);
 extern void ezprv_mem_cpy(uint8_t *dest, uint8_t *src, uint16_t size);
 
 #ifdef EZOS_SEM
@@ -65,17 +64,12 @@ ez_err_t ezos_sem_init(ez_sem_t *sem, uint8_t value) {
 /**
  * \brief           获取信号量. 只能在任务中使用
  * \param[in]       sem:        信号量指针
- * \param[in]       timeout:    信号量超时时间. 特殊值如下.
- *  \arg \c         >0                  设置超时时间, 单位ms.
- *  \arg \c         0                   不等待, 直接返回 EZOS_OK 或 EZOS_ERR_OVER
- *  \arg \c         <0/EZTM_FOREVER     永久等待.
  * \return          获取信号量是否成功
  *  \arg \c         EZOS_OK             获取成功.
  *  \arg \c         EZOS_FAIL           接收失败, 任务自动延时等待
  *  \arg \c         EZOS_ERROR          报错, 非法参数
- *  \arg \c         EZOS_ERR_OVER       报错, 超时
  */
-ez_err_t ezos_sem_take(ez_sem_t *sem, eztm_t timeout) {
+ez_err_t ezos_sem_take(ez_sem_t *sem) {
     ez_err_t result = EZOS_ERROR;
     ASSERT(sem != NULL);
     ASSERT(sem->type == EZIPC_SEM);
@@ -87,7 +81,13 @@ ez_err_t ezos_sem_take(ez_sem_t *sem, eztm_t timeout) {
         run->ipc = NULL;
         result = EZOS_OK;  // 成功获取信号量
     } else {               // 失败
-        result = prv_ipc_fail_process(sem, timeout);
+        run->ipc = sem;
+        if (run->delay > 0) {
+            run->status = EZOS_SUSPEND;
+        } else {
+            run->status = EZOS_FROZEN;
+        }
+        result = EZOS_FAIL;
     }
     ezos_enable_irq();
     return result;
@@ -154,17 +154,12 @@ ez_err_t ezos_mutex_init(ez_mutex_t *mutex, uint8_t value) {
 /**
  * \brief           获取互斥量. 只能在任务中使用
  * \param[in]       mutex:      互斥量指针
- * \param[in]       timeout:    互斥量等待时间. 特殊值如下.
- *  \arg \c         >0                  设置超时时间, 单位ms.
- *  \arg \c         0                   不等待, 直接返回 EZOS_OK 或 EZOS_ERR_OVER
- *  \arg \c         <0/EZTM_FOREVER     永久等待.
  * \return          获取互斥量是否成功
  *  \arg \c         EZOS_OK             获取成功.
  *  \arg \c         EZOS_FAIL           接收失败, 任务自动延时等待
  *  \arg \c         EZOS_ERROR          报错, 非法参数
- *  \arg \c         EZOS_ERR_OVER       报错, 超时
  */
-ez_err_t ezos_mutex_take(ez_mutex_t *mutex, eztm_t timeout) {
+ez_err_t ezos_mutex_take(ez_mutex_t *mutex) {
     ez_err_t result = EZOS_ERROR;
     ASSERT(mutex != NULL);
     ASSERT(mutex->type == EZIPC_MUTEX);
@@ -176,7 +171,13 @@ ez_err_t ezos_mutex_take(ez_mutex_t *mutex, eztm_t timeout) {
         run->ipc = NULL;
         result = EZOS_OK;  // 成功获取互斥量
     } else {               // 失败
-        result = prv_ipc_fail_process(mutex, timeout);
+        run->ipc = mutex;
+        if (run->delay > 0) {
+            run->status = EZOS_SUSPEND;
+        } else {
+            run->status = EZOS_FROZEN;
+        }
+        result = EZOS_FAIL;
     }
     ezos_enable_irq();
     return result;
@@ -246,15 +247,11 @@ ez_err_t ezos_event_init(ez_event_t *event, uint32_t value) {
  * \param[in]       event:      事件指针
  * \param[in]       and_mask:   需要的与事件掩码, 置0忽略与事件.
  * \param[in]       or_mask:    需要的或事件掩码, 置0忽略或事件.
- * \param[in]       timeout:    互斥量等待时间. 特殊值如下.
- *  \arg \c         >0                  设置超时时间, 单位ms.
- *  \arg \c         0                   不等待, 直接返回 EZOS_OK 或 EZOS_ERR_OVER
- *  \arg \c         <0/EZTM_FOREVER     永久等待.
  * \return          获取事件是否成功
  *  \arg \c         EZOS_OK     获取成功
  *  \arg \c         EZOS_ERROR  报错, 非法参数
  */
-ez_err_t ezos_event_get(ez_event_t *event, uint32_t and_mask, uint32_t or_mask, eztm_t timeout) {
+ez_err_t ezos_event_get(ez_event_t *event, uint32_t and_mask, uint32_t or_mask) {
     ez_err_t result = EZOS_ERROR;
     uint32_t value;
     ASSERT(event != NULL);
@@ -267,7 +264,13 @@ ez_err_t ezos_event_get(ez_event_t *event, uint32_t and_mask, uint32_t or_mask, 
         run->ipc = NULL;
         result = EZOS_OK;  // 成功获取事件
     } else {
-        result = prv_ipc_fail_process(event, timeout);
+        run->ipc = event;
+        if (run->delay > 0) {
+            run->status = EZOS_SUSPEND;
+        } else {
+            run->status = EZOS_FROZEN;
+        }
+        result = EZOS_FAIL;
     }
     ezos_enable_irq();
     return result;
@@ -423,17 +426,12 @@ ez_err_t ezos_mq_send(ez_mq_t *mq, void *msg) {
  * \brief           接收消息, 大小为 msg_size
  * \param[in]       mq:         消息队列指针
  * \param[in]       msg:        接收消息的指针
- * \param[in]       timeout:    消息队列等待时间. 特殊值如下.
- *  \arg \c         >0                  设置超时时间, 单位ms.
- *  \arg \c         0                   不等待, 直接返回 EZOS_OK 或 EZOS_ERR_OVER
- *  \arg \c         <0/EZTM_FOREVER     永久等待.
  * \return          接收消息队列是否成功
  *  \arg \c         EZOS_OK             接收成功, 状态机自动递增
  *  \arg \c         EZOS_FAIL           接收失败, 任务自动延时等待
  *  \arg \c         EZOS_ERROR          报错, 非法参数
- *  \arg \c         EZOS_ERR_OVER       报错, 超时
  */
-ez_err_t ezos_mq_receive(ez_mq_t *mq, void *msg, eztm_t timeout) {
+ez_err_t ezos_mq_receive(ez_mq_t *mq, void *msg) {
     ez_err_t result = EZOS_ERROR;
     ASSERT(mq != NULL);
     ASSERT(msg != NULL);  // 接收端, msg必须未有效指针
@@ -449,7 +447,13 @@ ez_err_t ezos_mq_receive(ez_mq_t *mq, void *msg, eztm_t timeout) {
         run->ipc = NULL;
         result = EZOS_OK;  // 从消息队列中取出消息
     } else {               // 失败
-        result = prv_ipc_fail_process(mq, timeout);
+        run->ipc = mq;
+        if (run->delay > 0) {
+            run->status = EZOS_SUSPEND;
+        } else {
+            run->status = EZOS_FROZEN;
+        }
+        result = EZOS_FAIL;
     }
     ezos_enable_irq();
     return result;
@@ -475,34 +479,5 @@ ez_err_t ezos_mq_clear(ez_mq_t *mq) {
     return EZOS_OK;
 }
 #endif /* EZOS_MQ */
-
-/**
- * \brief           私有函数, 尝试获取IPC失败后的相关处理
- */
-static ez_err_t prv_ipc_fail_process(void *ipc, eztm_t time_ms) {
-    if (run->ipc != ipc) {  // 首次失败, 设置run->delay
-        if (time_ms < 0) time_ms = EZTM_FOREVER;
-#if (EZOS_TICK_MS > 1)
-        else if (time_ms > 0) {  // 将ms的延时值转换为基础时钟的延时值
-            if (time_ms % EZOS_TICK_MS) time_ms += EZOS_TICK_MS;
-            time_ms /= EZOS_TICK_MS;
-        }
-#endif
-        run->delay = time_ms;
-    }
-
-    if (run->delay == 0) {  // 首次或多次获取IPC失败, 已超时
-        run->ipc = NULL;
-        return EZOS_ERR_OVER;  // 超时
-    } else {                   // 获取IPC失败, 未超时, 重新设置任务状态
-        run->ipc = ipc;
-        if (run->delay > 0) {
-            run->status = EZOS_SUSPEND;
-        } else {
-            run->status = EZOS_FROZEN;
-        }
-        return EZOS_FAIL;
-    }
-}
 
 #endif /* EZOS_IPC */

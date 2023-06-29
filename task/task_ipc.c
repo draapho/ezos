@@ -57,32 +57,37 @@ ezsm_t task_ipc(ezsm_t s, void *p) {
 }
 
 ezsm_t task_sem(ezsm_t s, void *p) {
+    static uint8_t times;
     switch (s) {
         case EZSM_INIT:
             printf("wait sem\r\n");
+            times = 0;
             ezos_delay_awhile();
             return ++s;
         case 1: {
             ez_err_t err;
-            err = ezos_sem_take(&sem, 1000);  // 等待信号量, 1s后超时
-            if (err == EZOS_OK) {             // 成功获取
-                printf("done, take sem in 1 sec\r\n");
+            err = ezos_sem_take(&sem);  // 尝试获取信号量
+            if (err == EZOS_OK) {       // 成功获取
+                if (times == 0) {
+                    printf("done, take sem immediately\r\n");
+                } else if (times == 1) {
+                    printf("done, take sem in 5 second\r\n");
+                } else {
+                    printf("done, take sem finally\r\n");
+                }
                 return EZSM_DONE;
-            } else if (err == EZOS_ERR_OVER) {  // 超时处理
-                printf("failed, overtime. now wait forever\r\n");
-                ezos_delay(1000);
-                return ++s;
-            } else {
+            } else if (err == EZOS_FAIL) {  // 获取失败, 重新等待
+                if (times == 0) {
+                    times = 1;
+                    printf("fail to take sem. now wait 5s\r\n");
+                    ezos_delay(5000);  // 延时1s, 看是否能获取信号量
+                } else {
+                    times = 2;
+                    printf("fail to take sem in 1s. now wait forever\r\n");
+                    ezos_delay_forever();
+                }
                 return s;
-            }
-        }
-        case 2: {
-            ez_err_t err;
-            err = ezos_sem_take(&sem, EZTM_FOREVER);  // 永久等待信号量
-            if (err == EZOS_OK) {                     // 成功获取
-                printf("done, take sem at last\r\n");
-                return EZSM_DONE;
-            } else {
+            } else {  // EZOS_ERROR, 不应该到这里
                 return s;
             }
         }
@@ -101,11 +106,13 @@ ezsm_t task_mq(ezsm_t s, void *p) {
             ez_err_t err;
             char msg_buf[30];
 
-            err = ezos_mq_receive(&mq, msg_buf, EZTM_FOREVER);  // 永久等待消息队列
-            if (err == EZOS_OK) {                               // 成功获取
+            err = ezos_mq_receive(&mq, msg_buf);
+            if (err == EZOS_OK) {  // 成功获取
                 printf("done, got mq: %s\r\n", msg_buf);
                 return EZSM_DONE;
             } else {
+                printf("fail to get mq immediately, wait forever\r\n");
+                ezos_delay_forever();  // 永久等待消息队列
                 return s;
             }
         }

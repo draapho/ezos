@@ -112,7 +112,7 @@ typedef enum {            // ezos 函数返回值
     EZOS_EXIST,           // 相关内容已存在.
     EZOS_ERR_MSK = 0x80,  // 错误掩码, 可通过 (err & EZOS_ERR_MSK) 判断是否错误.
     EZOS_ERROR,           // 错误.
-    EZOS_ERR_OVER,        // 错误, 空间溢出或时间超时.
+    EZOS_ERR_OVER,        // 错误, 空间溢出.
 } ez_err_t;
 
 typedef enum {          // ezos 任务状态

@@ -161,33 +161,33 @@ ez_test_t ezos_get_test_performance(void);  // 获取ezos性能测试数据
 #endif
 
 #ifdef EZOS_SEM
-ez_err_t ezos_sem_init(ez_sem_t* sem, uint8_t value);   // 初始化信号量
-ez_err_t ezos_sem_take(ez_sem_t* sem, eztm_t timeout);  // 获取信号量
-ez_err_t ezos_sem_release(ez_sem_t* sem);               // 释放信号量
-ez_err_t ezos_sem_release_irq(ez_sem_t* sem);           // 中断用释放信号量
+ez_err_t ezos_sem_init(ez_sem_t* sem, uint8_t value);  // 初始化信号量
+ez_err_t ezos_sem_take(ez_sem_t* sem);                 // 获取信号量
+ez_err_t ezos_sem_release(ez_sem_t* sem);              // 释放信号量
+ez_err_t ezos_sem_release_irq(ez_sem_t* sem);          // 中断用释放信号量
 #endif
 
 #ifdef EZOS_MUTEX
-ez_err_t ezos_mutex_init(ez_mutex_t* mutex, uint8_t value);   // 初始化互斥量
-ez_err_t ezos_mutex_take(ez_mutex_t* mutex, eztm_t timeout);  // 获取互斥量
-ez_err_t ezos_mutex_release(ez_mutex_t* mutex);               // 释放互斥量
-ez_err_t ezos_mutex_release_irq(ez_mutex_t* mutex);           // 中断用释放互斥量
+ez_err_t ezos_mutex_init(ez_mutex_t* mutex, uint8_t value);  // 初始化互斥量
+ez_err_t ezos_mutex_take(ez_mutex_t* mutex);                 // 获取互斥量
+ez_err_t ezos_mutex_release(ez_mutex_t* mutex);              // 释放互斥量
+ez_err_t ezos_mutex_release_irq(ez_mutex_t* mutex);          // 中断用释放互斥量
 #endif
 
 #ifdef EZOS_EVENT
-ez_err_t ezos_event_init(ez_event_t* event, uint32_t value);                                      // 初始化事件
-ez_err_t ezos_event_get(ez_event_t* event, uint32_t and_mask, uint32_t or_mask, eztm_t timeout);  // 获取事件值
-ez_err_t ezos_event_set(ez_event_t* event, uint32_t bits);                                        // 设置事件
-ez_err_t ezos_event_set_irq(ez_event_t* event, uint32_t bits);                                    // 中断用设置事件
-ez_err_t ezos_event_clear(ez_event_t* event, uint32_t bits);                                      // 清除事件
-ez_err_t ezos_event_clear_irq(ez_event_t* event, uint32_t bits);                                  // 中断用清除事件
+ez_err_t ezos_event_init(ez_event_t* event, uint32_t value);                      // 初始化事件
+ez_err_t ezos_event_get(ez_event_t* event, uint32_t and_mask, uint32_t or_mask);  // 获取事件值
+ez_err_t ezos_event_set(ez_event_t* event, uint32_t bits);                        // 设置事件
+ez_err_t ezos_event_set_irq(ez_event_t* event, uint32_t bits);                    // 中断用设置事件
+ez_err_t ezos_event_clear(ez_event_t* event, uint32_t bits);                      // 清除事件
+ez_err_t ezos_event_clear_irq(ez_event_t* event, uint32_t bits);                  // 中断用清除事件
 #endif
 
 #ifdef EZOS_MQ
 ez_err_t ezos_mq_init(ez_mq_t* mq, uint16_t msg_size, void* pool, uint16_t pool_size);  // 添加消息队列
 ez_err_t ezos_mq_send(ez_mq_t* mq, void* msg);                                          // 发送消息
 ez_err_t ezos_mq_send_irq(ez_mq_t* mq, void* msg);                                      // 中断用发送消息
-ez_err_t ezos_mq_receive(ez_mq_t* mq, void* msg, eztm_t timeout);                       // 接收消息
+ez_err_t ezos_mq_receive(ez_mq_t* mq, void* msg);                                       // 接收消息
 ez_err_t ezos_mq_clear(ez_mq_t* mq);                                                    // 清空消息
 #endif
 
