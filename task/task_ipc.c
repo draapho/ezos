@@ -80,10 +80,10 @@ ezsm_t task_sem(ezsm_t s, void *p) {
                 if (times == 0) {
                     times = 1;
                     printf("fail to take sem. now wait 5s\r\n");
-                    ezos_delay(5000);  // 延时1s, 看是否能获取信号量
+                    ezos_delay(5000);  // 延时5s, 看是否能获取信号量
                 } else {
                     times = 2;
-                    printf("fail to take sem in 1s. now wait forever\r\n");
+                    printf("fail to take sem in 5s. now wait forever\r\n");
                     ezos_delay_forever();
                 }
                 return s;

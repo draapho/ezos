@@ -32,7 +32,7 @@ ezsm_t task_mems(ezsm_t s, void *p) {
     switch (s) {
         case EZSM_INIT: {  // 申请一个动态内存, 并赋值
             unsigned int num = atoi(p);
-            const ez_task_t *cur = ezos_self_info();
+            const ez_task_t *cur = ezos_self_ptr();
 
             mem_ptr = self_malloc(num);  // 申请动态内存
             if (mem_ptr == NULL) return EZSM_ERROR;

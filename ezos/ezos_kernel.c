@@ -167,13 +167,17 @@ void ezos_schedule(void) {
  * \brief           添加任务, 任务状态初始化为 EZSM_INIT, 0 值.
  * \param[in]       name:   任务名称, 同时也是任务优先级, 值越小优先级越高
  * \param[in]       para:   函数参数
+ * \param[in]       time_ms:    延时时间, 单位 ms. 特殊值如下:
+ *  \arg \c         EZTM_NULL       等待轮询高优先级任务
+ *  \arg \c         EZTM_AWHILE     等待轮询所有任务
+ *  \arg \c         EZTM_FOREVER    永久等待
  * \return          添加任务是否成功
  *  \arg \c         EZOS_OK         添加任务成功
  *  \arg \c         EZOS_EXIST      添加任务失败, 任务已存在
  *  \arg \c         EZOS_ERROR      报错, 非法参数
  *  \arg \c         EZOS_ERR_OVER   报错, 任务已满
  */
-ez_err_t ezos_add(task_name_t name, void *para) {
+ez_err_t ezos_add(task_name_t name, void *para, eztm_t time_ms) {
     ez_task_t *task, *pre, *search;
     ASSERT(name < EZOS_TASK_IDLE);
     if (name >= EZOS_TASK_IDLE) return EZOS_ERROR;  // 非法参数
@@ -190,15 +194,27 @@ ez_err_t ezos_add(task_name_t name, void *para) {
         trash = trash->next;
     }
 
+    if (time_ms <= EZTM_FOREVER) time_ms = EZTM_FOREVER;
+#if (EZOS_TICK_MS > 1)
+    else if (time_ms > 0) {  // 将ms的延时值转换为基础时钟的延时值
+        if (time_ms % EZOS_TICK_MS) time_ms += EZOS_TICK_MS;
+        time_ms /= EZOS_TICK_MS;
+    }
+#endif
+
     ezos_disable_irq();
     task->next = search;
     pre->next = task;   // 加入任务节点
     task->name = name;  // 给任务节点赋值
-    task->delay = 0;
-    task->status = EZOS_READY;
 #ifdef EZOS_IPC
     task->ipc = NULL;
 #endif
+    task->delay = time_ms;
+    if (time_ms > 0) {
+        task->status = EZOS_SUSPEND;
+    } else {
+        task->status = (ez_status_t)time_ms;
+    }
     ezos_enable_irq();
 
     task->para = para;
@@ -384,7 +400,7 @@ task_name_t ezos_self_name(void) {
 /**
  * \brief           获取当前任务的指针.
  */
-const ez_task_t *ezos_self_info(void) {
+const ez_task_t *ezos_self_ptr(void) {
     return run;
 }
 

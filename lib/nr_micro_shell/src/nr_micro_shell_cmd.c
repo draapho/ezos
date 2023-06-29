@@ -160,7 +160,7 @@ void cmd_task(char argc, char *argv, action_t action) {
                     if (action == CMD_ADD) {
                         rtn = task_add(task_cmd_list[i].name);
                     } else {
-                        rtn = force_add(task_cmd_list[i].name, NULL);
+                        rtn = force_add(task_cmd_list[i].name);
                     }
                     return;
                 } else {
@@ -176,9 +176,9 @@ void cmd_task(char argc, char *argv, action_t action) {
                     if (pbuff) {
                         snprintf(pbuff, TASK_PARA_SIZE_MAX, &argv[(uint8_t)argv[2]]);
                         if (action == CMD_ADD) {
-                            rtn = ezos_add(task_cmd_list[i].name, pbuff);
+                            rtn = task_add_para(task_cmd_list[i].name, pbuff);
                         } else {
-                            rtn = force_add(task_cmd_list[i].name, pbuff);
+                            rtn = force_add_para(task_cmd_list[i].name, pbuff);
                         }
                     } else {
                         rtn = 0xF0;

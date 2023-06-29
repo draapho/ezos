@@ -122,13 +122,13 @@ void ezos_set_idle_hook(void (*hook)(void));   // 设置空闲任务钩子函数
 void ezos_set_sleep_hook(void (*hook)(void));  // 设置系统睡眠钩子函数
 void ezos_schedule(void);                      // 任务调度, main函数的最后调用
 
-ez_err_t ezos_add(task_name_t name, void* para);  // 添加任务
-ez_err_t ezos_delay(eztm_t time_ms);              // 当前任务等待, 单位ms
-ez_err_t ezos_delete(task_name_t name);           // 删除任务, 用户一般不使用, 而是让任务运行完后自动删除
-ez_err_t ezos_done(void);                         // 判断所有任务是否执行完成, 可用于辅助判断系统是否可以进入睡眠状态
-ez_status_t ezos_status(task_name_t name);        // 获取任务状态
-task_name_t ezos_self_name(void);                 // 获取当前任务的名称
-const ez_task_t* ezos_self_info(void);            // 获取当前任务的指针
+ez_err_t ezos_add(task_name_t name, void* para, eztm_t time_ms);  // 添加任务
+ez_err_t ezos_delay(eztm_t time_ms);                              // 当前任务等待, 单位ms
+ez_err_t ezos_delete(task_name_t name);                           // 删除任务, 用户一般不使用, 而是让任务运行完后自动删除
+ez_err_t ezos_done(void);                                         // 判断所有任务是否执行完成, 可用于辅助判断系统是否可以进入睡眠状态
+ez_status_t ezos_status(task_name_t name);                        // 获取任务状态
+task_name_t ezos_self_name(void);                                 // 获取当前任务的名称
+const ez_task_t* ezos_self_ptr(void);                            // 获取当前任务的指针
 
 ez_err_t ezos_resume_irq(task_name_t name);  // 中断中恢复指定任务
 ez_err_t ezos_resume(task_name_t name);      // 恢复指定任务
@@ -136,11 +136,26 @@ ez_err_t ezos_frozen(task_name_t name);      // 冻结指定任务
 
 // ezos_add 的简化函数
 __STATIC_FORCEINLINE ez_err_t task_add(task_name_t name) {
-    return ezos_add(name, NULL);
+    return ezos_add(name, NULL, EZTM_NULL);
 }
-__STATIC_FORCEINLINE ez_err_t force_add(task_name_t name, void* para) {
+__STATIC_FORCEINLINE ez_err_t task_add_para(task_name_t name, void* para) {
+    return ezos_add(name, para, EZTM_NULL);
+}
+__STATIC_FORCEINLINE ez_err_t task_add_delay(task_name_t name, eztm_t time_ms) {
+    return ezos_add(name, NULL, time_ms);
+}
+__STATIC_FORCEINLINE ez_err_t force_add_para_delay(task_name_t name, void* para, eztm_t time_ms) {
     ezos_delete(name);
-    return ezos_add(name, para);
+    return ezos_add(name, para, time_ms);
+}
+__STATIC_FORCEINLINE ez_err_t force_add(task_name_t name) {
+    return force_add_para_delay(name, NULL, EZTM_NULL);
+}
+__STATIC_FORCEINLINE ez_err_t force_add_para(task_name_t name, void* para) {
+    return force_add_para_delay(name, para, EZTM_NULL);
+}
+__STATIC_FORCEINLINE ez_err_t force_add_delay(task_name_t name, eztm_t time_ms) {
+    return force_add_para_delay(name, NULL, time_ms);
 }
 
 // ezos_delay 的简化函数

@@ -29,19 +29,19 @@ void system_init(void) {
 
     task_add(TASK_SHELL);
     task_add(TASK_LED);
-    ezos_add(TASK_HELLO, &"Jack");  // 同一个任务函数 task_hello, 可以有两个不同的任务实例.
-    ezos_add(TASK_HELLO_1, &"Mary");
+    task_add_para(TASK_HELLO, &"Jack");  // 同一个任务函数 task_hello, 可以有两个不同的任务实例.
+    task_add_para(TASK_HELLO_1, &"Mary");
     // 更多范例请用终端命令调用, 格式 add [task_cmd]
 
     // 多层状态机范例
     // task_add(TASK_HSM);
-    // ezos_add(TASK_HSM, &"x");
+    // task_add_para(TASK_HSM, &"x");
 
     // IPC信号量范例
     // task_add(TASK_WAIT_SEM);
     // task_add(TASK_IPC);
     // task_add(TASK_WAIT_MQ);
-    // ezos_add(TASK_IPC, "test mq");
+    // task_add_para(TASK_IPC, "test mq");
 
     ezos_schedule();
 }
