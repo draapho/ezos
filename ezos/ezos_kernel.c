@@ -334,6 +334,9 @@ ez_err_t ezprv_set_task(task_name_t name, eztm_t time_ms) {
         search = search->next;
     }
     if (search->name == name) {  // 任务已找到
+#ifdef EZOS_IPC
+        search->ipc = NULL;  // 避免信号量意外激活任务
+#endif
         search->delay = time_ms;
         if (time_ms > 0) {
             search->status = EZOS_SUSPEND;
