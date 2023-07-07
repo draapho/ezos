@@ -41,9 +41,11 @@ __STATIC_INLINE uint32_t led_port_level(led_name_t led_name) {
 #ifdef LED_ADVANCED
 typedef struct
 {
-    volatile uint16_t counter;      // LED PWM计数器/闪烁计数器
-    volatile uint16_t dutyfactor;   // LED PWM占空比/闪烁频率
-    volatile uint16_t destination;  // LED PWM占空比目标值/闪烁次数
+    uint16_t counter;      // LED PWM计数器/闪烁计数器
+    uint16_t dutyfactor;   // LED PWM占空比/闪烁频率
+    uint16_t destination;  // LED PWM占空比目标值/闪烁次数
+    uint8_t times;         // LED 调整原本固定的渐变时间
+    uint8_t timei;         // 计数渐变时间
 } led_para_t;
 #endif
 
@@ -52,13 +54,14 @@ typedef struct
 #define FLAG_BLED 0x4000  // 呼吸灯标记
 #define FLAG_FLED 0x8000  // 闪烁灯标记
 
-#define BLED_PWM_WIDTH 20    // B=Breath, 呼吸灯PWM脉宽, 单位ms, <25避免闪烁感, 影响渐变时间
-#define FLED_TIME_MIN 2      // F=Flash,  闪烁周期最小值
-#define FLED_TIME_MAX 30000  // F=Flash,  闪烁周期最大值, 闪烁周期必须小于 0x4000 ms
+#define BLED_PWM_WIDTH 20                                     // B=Breath, 呼吸灯PWM脉宽, 20ms 为 50hz, 无闪烁, 20级渐变, 梯度合适. 允许最小值: 16
+#define BLED_GRADIENT_BASE (BLED_PWM_WIDTH * BLED_PWM_WIDTH)  // B=Breath, 呼吸灯渐变基础时间
+#define FLED_TIME_MIN 20                                      // F=Flash,  闪烁周期最小值, 50hz
+#define FLED_TIME_MAX 30000                                   // F=Flash,  闪烁周期最大值, 闪烁周期必须小于 0x4000 ms
 
 /* variable */
 #ifdef LED_ADVANCED
-static led_para_t led_para[DRV_LED_NAME_END];
+static volatile led_para_t led_para[DRV_LED_NAME_END];
 #endif
 
 /* function */
@@ -123,16 +126,14 @@ led_status_t led_status(led_name_t led_name) {
     if (led_name >= DRV_LED_NAME_END) return LED_OFF;
 
 #ifdef LED_ADVANCED
-    if ((led_para[led_name].destination & FLAG_MASK) == FLAG_BLED)  // 呼吸灯
-    {
+    if ((led_para[led_name].destination & FLAG_MASK) == FLAG_BLED) {  // 呼吸灯
         if (led_para[led_name].destination < (FLAG_BLED | BLED_PWM_WIDTH))
             return BLED_ON;
         else
             return BLED_OFF;
     }
 
-    if ((led_para[led_name].destination & FLAG_MASK) == FLAG_FLED)  // 闪烁灯
-    {
+    if ((led_para[led_name].destination & FLAG_MASK) == FLAG_FLED) {  // 闪烁灯
 #if (LED_ON_LEVEL > 0)
         if (led_port_level(led_name))
             return FLED_ON;
@@ -161,39 +162,53 @@ led_status_t led_status(led_name_t led_name) {
 }
 
 #ifdef LED_ADVANCED
-// LED调节亮度值, 0最亮, 0xFF熄灭.
-void bled_set(led_name_t led_name, uint8_t level) {
-    led_status_t st;
+// LED调节亮度值和渐变速度, 0最亮, 0xFF熄灭. 渐变速度: 只能实现400ms的倍数或整除的时间. 0表示使用默认值
+void bled_set(led_name_t led_name, uint8_t level, uint16_t gradient_ms) {
     if (led_name < DRV_LED_NAME_END) {
+        led_status_t st = led_status(led_name);
         level = (uint16_t)level * BLED_PWM_WIDTH / 0xFF;
-        st = led_status(led_name);
-        if ((st == LED_ON) || (st == FLED_ON)) {            // LED全亮状态
+
+        led_para[led_name].counter = FLAG_BLED | 0;  // 重新开始PWM计数, 避免中断后改变数值
+
+        if (gradient_ms == 0) {  // 0, 使用默认渐变时间
+            gradient_ms = BLED_GRADIENT_BASE;
+        }
+        if (gradient_ms >= BLED_GRADIENT_BASE) {
+            led_para[led_name].timei = 0;
+            led_para[led_name].times = (gradient_ms / BLED_GRADIENT_BASE);  // 渐变时间要拉长
+        } else {
+            uint8_t tmp = (BLED_GRADIENT_BASE / gradient_ms);
+            if (tmp > BLED_PWM_WIDTH) tmp = BLED_PWM_WIDTH;
+            led_para[led_name].timei = tmp;
+            led_para[led_name].times = 0;  // 渐变时间要缩短
+        }
+
+        if ((st == LED_ON) || (st == FLED_ON)) {            // 其它状态的LED熄灭状态
             led_para[led_name].dutyfactor = FLAG_BLED | 0;  // 占空比起始值
-        } else if ((st == LED_OFF) || (st == FLED_OFF)) {   // LED熄灭状态
+        } else if ((st == LED_OFF) || (st == FLED_OFF)) {   // 其它状态的LED全亮状态
             led_para[led_name].dutyfactor = FLAG_BLED | BLED_PWM_WIDTH;
         }
 
-        led_para[led_name].counter = FLAG_BLED | 0;          // 重新开始PWM计数
         led_para[led_name].destination = FLAG_BLED | level;  // 设置目标亮度值
     }
 }
 
-void bled_on(led_name_t led_name) {
-    bled_set(led_name, 0);
+void bled_on(led_name_t led_name, uint16_t gradient_ms) {
+    bled_set(led_name, 0, gradient_ms);
 }
 
-void bled_off(led_name_t led_name) {
-    bled_set(led_name, 0xFF);
+void bled_off(led_name_t led_name, uint16_t gradient_ms) {
+    bled_set(led_name, 0xFF, gradient_ms);
 }
 
-void bled_toggle(led_name_t led_name) {
+void bled_toggle(led_name_t led_name, uint16_t gradient_ms) {
     led_status_t st;
     if (led_name < DRV_LED_NAME_END) {
         st = led_status(led_name);
         if (st & LED_ON_MASK)
-            bled_set(led_name, 0xFF);
+            bled_set(led_name, 0xFF, gradient_ms);
         else
-            bled_set(led_name, 0);
+            bled_set(led_name, 0, gradient_ms);
     }
 }
 
@@ -226,18 +241,33 @@ void led_scan_1ms(void) {
             continue;
         } else if ((led_para[i].destination & FLAG_MASK) == FLAG_BLED) {  // 呼吸灯
             if (++led_para[i].counter >= (FLAG_BLED | BLED_PWM_WIDTH)) {  // 新一轮PWM脉宽开始
-#if (LED_ON_LEVEL > 0)                                                    // 关灯
+                led_para[i].counter = FLAG_BLED | 0;
+#if (LED_ON_LEVEL > 0)  // 关灯
                 led_port_low((led_name_t)i);
 #else
                 led_port_high((led_name_t)i);
 #endif
 
-                led_para[i].counter = FLAG_BLED | 0;
                 temp = led_para[i].destination;
-                if (led_para[i].dutyfactor < temp) {  // 占空比逐渐接近目标值
-                    led_para[i].dutyfactor++;
-                } else if (led_para[i].dutyfactor > temp) {
-                    led_para[i].dutyfactor--;
+                if (led_para[i].times) {  // 渐变时间要拉长
+                    if (++led_para[i].timei >= led_para[i].times) {
+                        led_para[i].timei = 0;
+                        if (led_para[i].dutyfactor < temp) {  // 占空比缓慢接近目标值
+                            led_para[i].dutyfactor++;
+                        } else if (led_para[i].dutyfactor > temp) {
+                            led_para[i].dutyfactor--;
+                        }
+                    }
+                } else {  // (led_para[i].times == 0) 渐变时间要缩短
+                    if (led_para[i].dutyfactor < temp) {
+                        led_para[i].dutyfactor += led_para[i].timei;  // 占空比快速接近目标值
+                        if (led_para[i].dutyfactor > temp)
+                            led_para[i].dutyfactor = temp;
+                    } else if (led_para[i].dutyfactor > temp) {
+                        led_para[i].dutyfactor -= led_para[i].timei;
+                        if (led_para[i].dutyfactor < temp)
+                            led_para[i].dutyfactor = temp;
+                    }
                 }
             }
 
@@ -308,7 +338,7 @@ void led_test(char argc, char *argv) {
     } else if (!strcmp("off", fun)) {
         led_off(name);
     } else if (!strcmp("toggle", fun)) {
-        bled_toggle(name);
+        bled_toggle(name, 0);
     } else if (!strcmp("flash", fun)) {
         led_flash(name, 500, 5);
 #endif /* LED_ADVANCED */

@@ -27,17 +27,17 @@ typedef enum {
         DRV_LED_NAME_END,
 } led_name_t;
 
+#define LED_MASK 0x10
+#define BLED_MASK 0x20
+#define FLED_MASK 0x40
+#define LED_ON_MASK 0x01
 typedef enum {
-    LED_OFF = 0x10,   // LED灯关闭状态
-    LED_ON = 0x11,    // LED灯打开状态
-    BLED_OFF = 0x20,  // 呼吸灯关闭状态
-    BLED_ON = 0x21,   // 呼吸灯打开状态
-    FLED_OFF = 0x40,  // 闪烁灯低电平状态
-    FLED_ON = 0x41,   // 闪烁灯高电平状态
-    LED_ON_MASK = 0x01,
-    LED_MASK = 0x10,
-    BLED_MASK = 0x20,
-    FLED_MASK = 0x40,
+    LED_OFF = LED_MASK | 0x00,          // LED灯关闭状态
+    LED_ON = LED_MASK | LED_ON_MASK,    // LED灯打开状态
+    BLED_OFF = BLED_MASK | 0x00,        // 呼吸灯关闭状态
+    BLED_ON = BLED_MASK | LED_ON_MASK,  // 呼吸灯打开状态
+    FLED_OFF = FLED_MASK | 0x00,        // 闪烁灯低电平状态
+    FLED_ON = FLED_MASK | LED_ON_MASK,  // 闪烁灯高电平状态
 } led_status_t;
 
 /* function */
@@ -50,12 +50,12 @@ led_status_t led_status(led_name_t led_name);  // 读取当前LED状态
 
 #ifdef LED_ADVANCED
 
-void led_scan_1ms(void);                                                 // LED 1ms 定时扫描, 在1ms定时中断函数中调用
-void bled_set(led_name_t led_name, uint8_t level);                       // LED渐变设定亮度值. 0最亮, 0xFF熄灭.
-void bled_on(led_name_t led_name);                                       // LED渐变打开
-void bled_off(led_name_t led_name);                                      // LED渐变关闭
-void bled_toggle(led_name_t led_name);                                   // LED渐变翻转
-void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t counter);  // LED闪烁, time_ms为闪烁周期, counter指定次数, =0 表示一直闪烁
+void led_scan_1ms(void);                                                  // LED 1ms 定时扫描, 在1ms定时中断函数中调用
+void bled_set(led_name_t led_name, uint8_t level, uint16_t gradient_ms);  // LED渐变设定亮度值和渐变速度. 0最亮, 0xFF熄灭. 渐变速度单位ms, 0为400ms默认值.
+void bled_on(led_name_t led_name, uint16_t gradient_ms);                  // LED渐变打开
+void bled_off(led_name_t led_name, uint16_t gradient_ms);                 // LED渐变关闭
+void bled_toggle(led_name_t led_name, uint16_t gradient_ms);              // LED渐变翻转
+void led_flash(led_name_t led_name, uint16_t time_ms, uint8_t times);     // LED闪烁, time_ms为闪烁周期, counter指定次数, =0 表示一直闪烁
 
 #endif /* LED_ADVANCED */
 
