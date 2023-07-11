@@ -24,10 +24,12 @@ typedef uint16_t keyint_t;      // 数据类型的bit数, 确定了按键数量�
 
 /* X Macro: 定义所有的KEY名称和对应的GPIO口 */
 /* 推荐在 drv_gpio_cfg.h 内统一配置 */
-#ifndef DRV_KEY_NAME_GPIO
+/*
 #define DRV_KEY_NAME_GPIO \
     X(KEY_EXAMPLE, GPIOC, GPIO_PIN_13)
-#endif /* DRV_KEY_NAME_GPIO */
+*/
+
+#ifdef DRV_KEY_NAME_GPIO
 
 /* typedef */
 typedef enum {
@@ -104,5 +106,7 @@ __STATIC_INLINE keyint_t key_clear(volatile keyint_t *event, key_name_t key_name
 __STATIC_INLINE void key_clear_all(void) {
     memset((void *)&key_event, 0, sizeof(key_event));
 }
+
+#endif /* DRV_KEY_NAME_GPIO */
 
 #endif /* DRV_GPIO_KEY_H */

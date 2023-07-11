@@ -15,6 +15,7 @@ build
 Debug
 rtthread
 settings
+.settings
 documentation/html
 *~
 *.o

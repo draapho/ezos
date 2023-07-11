@@ -105,8 +105,9 @@ void uart_buf_init(uart_name_t *ez_uart, USART_TypeDef *uart, uint8_t *tx_data, 
 int32_t uart_rx(uart_name_t *ez_uart, uint8_t *pdata, uint16_t max_size) {
     int32_t i;
 
-    if ((ez_uart == NULL) || (ez_uart->rx_i == 0))
+    if ((ez_uart == NULL) || (ez_uart->rx_i == 0)) {
         return 0;
+    }
 
     CLEAR_BIT(ez_uart->uart->CR1, USART_CR1_RXNEIE);
     if (ez_uart->rx_i <= ez_uart->rx_max) {  // not overflow

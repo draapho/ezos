@@ -5,6 +5,8 @@
 
 #include "drv_gpio_ctrl.h"
 
+#ifdef DRV_CTRL_NAME_GPIO_ON
+
 /* ctrl porting */
 typedef struct {
     gpio_hw_t io;
@@ -126,3 +128,5 @@ void ctrl_test(char argc, char *argv) {
 #else
 __INLINE void ctrl_test(char argc, char *argv) {}
 #endif /* DRV_GPIO_TEST */
+
+#endif /* DRV_CTRL_NAME_GPIO_ON */

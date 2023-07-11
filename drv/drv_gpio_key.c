@@ -5,6 +5,8 @@
 
 #include "drv_gpio_key.h"
 
+#ifdef DRV_KEY_NAME_GPIO
+
 /* key porting */
 static const gpio_hw_t key_hw[DRV_KEY_NAME_END] = {  // 按键硬件映射表
 #define X(name, port, pin) {port, pin},
@@ -56,8 +58,8 @@ void key_scan(void) {
 
     key_event.on_off = 0;
     for (i = 0; i < DRV_KEY_NAME_END; i++) {
-        bit = !key_port_level((key_name_t)i);  // 获取按键当前电平值
-        key_event.on_off |= (bit << i);        // 提取当前按键状态
+        bit = key_port_level((key_name_t)i);  // 获取按键当前电平值
+        key_event.on_off |= (bit << i);       // 提取当前按键状态
     }
 
     switch (key_state) {
@@ -192,3 +194,5 @@ void key_test(char argc, char *argv) {
 #else
 __INLINE void key_test(char argc, char *argv) {}
 #endif /* DRV_GPIO_TEST */
+
+#endif /* DRV_KEY_NAME_GPIO */

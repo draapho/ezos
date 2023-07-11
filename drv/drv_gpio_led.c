@@ -5,6 +5,8 @@
 
 #include "drv_gpio_led.h"
 
+#ifdef DRV_LED_NAME_GPIO
+
 /* led porting */
 static const gpio_hw_t led_hw[DRV_LED_NAME_END] = {  // LED硬件映射表
 #define X(name, port, pin) {port, pin},
@@ -351,3 +353,5 @@ void led_test(char argc, char *argv) {
 #else
 __INLINE void led_test(char argc, char *argv) {}
 #endif /* DRV_GPIO_TEST */
+
+#endif /* DRV_LED_NAME_GPIO */

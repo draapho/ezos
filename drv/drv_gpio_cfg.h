@@ -17,7 +17,7 @@
 
 /* CTRL config: 定义所有的控制端口, 对应的GPIO口, 以及打开电平 */
 #define DRV_CTRL_NAME_GPIO_ON \
-    X(LED, GPIOA, LL_GPIO_PIN_5, 1)
+    X(FLASH_CS, GPIOA, LL_GPIO_PIN_9, 0)
 
 /* KEY config: 定义所有的按键名称和对应的GPIO口 */
 #define DRV_KEY_NAME_GPIO \
@@ -26,6 +26,18 @@
 /* LED config: 定义所有的LED名称和对应的GPIO口 */
 #define DRV_LED_NAME_GPIO \
     X(LD2, GPIOA, LL_GPIO_PIN_5)
+
+/* I2C config: 定义所有的I2C名称和SCL,SDA的GPIO口 */
+/*
+#define DRV_I2C_NAME_SCL_SDA \
+    X(I2C_EEPROM, GPIOB, GPIO_PIN_6, GPIOB, GPIO_PIN_7)
+*/
+
+/* SPI config: 定义所有的SPI名称和SCK,MISO,MOSI的GPIO口 */
+/*
+#define DRV_SPI_NAME_SCK_MISO_MOSI \
+    X(SPI_FLASH, GPIOA, GPIO_PIN_6, GPIOA, GPIO_PIN_7, GPIOA, GPIO_PIN_8)
+*/
 
 /* test config */
 #define TEST_ARGV_LEN_MAX 10  // 测试用的传入参数字符串的最大值
