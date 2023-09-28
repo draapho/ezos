@@ -21,6 +21,7 @@ void system_init(void) {
     __enable_irq();                            // 调用 ezos_init() 之后再打开中断.
     ezos_set_idle_hook(ezos_handle_callback);  // 设置闲时任务钩子函数
 
+    gpio_init_clk();
     uart_buff_init_all();
     ipc_test_init();
     led_init_all();

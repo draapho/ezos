@@ -15,6 +15,19 @@
 #include "ezos_log.h"  // for LOG and ASSERT
 #include "main.h"      // for port and pin type
 
+/* GPIO 时钟初始化 */
+__STATIC_INLINE void gpio_init_clk(void) {
+    // __HAL_RCC_GPIOA_CLK_ENABLE();
+    // __HAL_RCC_GPIOB_CLK_ENABLE();
+    // __HAL_RCC_GPIOC_CLK_ENABLE();
+    // __HAL_RCC_GPIOD_CLK_ENABLE();
+
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+}
+
 /* CTRL config: 定义所有的控制端口, 对应的GPIO口, 以及打开电平 */
 #define DRV_CTRL_NAME_GPIO_ON \
     X(FLASH_CS, GPIOA, LL_GPIO_PIN_9, 0)
