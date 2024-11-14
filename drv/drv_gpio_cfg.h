@@ -91,11 +91,13 @@ __STATIC_INLINE void drv_output_pp_init(const gpio_hw_t *io) {
     // GPIO_InitTypeDef gpio = {0};
     // gpio.Pin = io->pin;
     // gpio.Mode = GPIO_MODE_OUTPUT_PP;
+    // gpio.Speed = GPIO_SPEED_FREQ_HIGH;
     // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
 
     LL_GPIO_InitTypeDef gpio = {0};
     gpio.Pin = io->pin;
     gpio.Mode = LL_GPIO_MODE_OUTPUT;
+    gpio.Speed = LL_GPIO_SPEED_FREQ_HIGH;
     gpio.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
     LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
 }
@@ -105,6 +107,7 @@ __STATIC_INLINE void drv_output_od_init(const gpio_hw_t *io) {
     // GPIO_InitTypeDef gpio = {0};
     // gpio.Pin = io->pin;
     // gpio.Mode = GPIO_MODE_OUTPUT_OD;
+    // gpio.Speed = GPIO_SPEED_FREQ_HIGH;
     // gpio.Pull = GPIO_NOPULL;  // 已有外部上拉
     // // gpio.Pull = GPIO_PULLUP;  // 使用内部上拉
     // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
@@ -112,6 +115,7 @@ __STATIC_INLINE void drv_output_od_init(const gpio_hw_t *io) {
     LL_GPIO_InitTypeDef gpio = {0};
     gpio.Pin = io->pin;
     gpio.Mode = LL_GPIO_MODE_OUTPUT;
+    gpio.Speed = LL_GPIO_SPEED_FREQ_HIGH;
     gpio.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
     gpio.Pull = LL_GPIO_PULL_NO;  // 已有外部上拉
     // gpio.Pull = LL_GPIO_PULL_UP;  // 使用内部上拉

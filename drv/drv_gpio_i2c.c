@@ -88,7 +88,6 @@ void i2c_start(i2c_name_t i2c_name) {
         i2c_delay_us(i2c_us[i2c_name]);
         i2c_scl_low(i2c_name);
         i2c_delay_us(i2c_us[i2c_name]);
-        i2c_sda_high(i2c_name);
     }
 }
 
@@ -173,7 +172,8 @@ i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data) {
     i2c_delay_us(i2c_us[i2c_name]);
     i2c_scl_low(i2c_name);
     i2c_delay_us(i2c_us[i2c_name]);
-
+    // i2c_delay_us(i2c_us[i2c_name]);    // 每字节额外的延时, 便于示波器观察
+    // i2c_delay_us(i2c_us[i2c_name]);
     return ack;
 }
 
@@ -187,7 +187,7 @@ i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data) {
  */
 uint8_t i2c_rx_byte(i2c_name_t i2c_name, i2c_ack_t ack) {
     uint8_t i, data = 0;
-    if (i2c_name < DRV_I2C_NAME_END) return 0xFF;
+    if (i2c_name >= DRV_I2C_NAME_END) return 0xFF;
 
     i2c_sda_high(i2c_name);  // 使SDA处于输入状态
     for (i = 0; i < 8; i++) {
@@ -212,6 +212,8 @@ uint8_t i2c_rx_byte(i2c_name_t i2c_name, i2c_ack_t ack) {
     i2c_delay_us(i2c_us[i2c_name]);
     i2c_scl_low(i2c_name);
     i2c_delay_us(i2c_us[i2c_name]);
+    // i2c_delay_us(i2c_us[i2c_name]);    // 每字节额外的延时, 便于示波器观察
+    // i2c_delay_us(i2c_us[i2c_name]);
 
     return data;
 }
