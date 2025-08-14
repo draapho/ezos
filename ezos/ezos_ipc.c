@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            ezos_ipc.c
  * \brief           ezos ipc source file
  */

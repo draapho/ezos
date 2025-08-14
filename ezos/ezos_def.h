@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            ezos_def.c
  * \brief           ezos define and typedef header file
  */

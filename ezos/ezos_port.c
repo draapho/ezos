@@ -30,6 +30,8 @@
  * Date:            2022/10/18
  */
 
+#include <stdint.h>
+
 /* 重定向 printf */
 #if 1  // 使用 syscalls.c
 
@@ -84,8 +86,6 @@ void log_dump(char *desc, uint8_t *buf, uint16_t size) {
 }
 
 /* 系统微秒级延时 */
-#include <stdint.h>
-
 #include "cmsis_compiler.h"  // for __NOP()
 
 // #pragma GCC push_options

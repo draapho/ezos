@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            ezos_cfg.h
  * \brief           ezos config header file
  */

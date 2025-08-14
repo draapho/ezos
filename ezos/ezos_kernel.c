@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            ezos_kernel.c
  * \brief           ezos kernel source file
  */

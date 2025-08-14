@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            ezos_mem.c
  * \brief           ezos memory source file
  */
