@@ -128,44 +128,44 @@ ez_err_t ezos_delete(task_name_t name);                           // 删除任�
 ez_err_t ezos_done(void);                                         // 判断所有任务是否执行完成, 可用于辅助判断系统是否可以进入睡眠状态
 ez_status_t ezos_status(task_name_t name);                        // 获取任务状态
 task_name_t ezos_self_name(void);                                 // 获取当前任务的名称
-const ez_task_t* ezos_self_ptr(void);                            // 获取当前任务的指针
+const ez_task_t* ezos_self_ptr(void);                             // 获取当前任务的指针
 
 ez_err_t ezos_resume_irq(task_name_t name);  // 中断中恢复指定任务
 ez_err_t ezos_resume(task_name_t name);      // 恢复指定任务
 ez_err_t ezos_frozen(task_name_t name);      // 冻结指定任务
 
 // ezos_add 的简化函数
-__STATIC_FORCEINLINE ez_err_t task_add(task_name_t name) {
+__STATIC_INLINE ez_err_t task_add(task_name_t name) {
     return ezos_add(name, NULL, EZTM_NULL);
 }
-__STATIC_FORCEINLINE ez_err_t task_add_para(task_name_t name, void* para) {
+__STATIC_INLINE ez_err_t task_add_para(task_name_t name, void* para) {
     return ezos_add(name, para, EZTM_NULL);
 }
-__STATIC_FORCEINLINE ez_err_t task_add_delay(task_name_t name, eztm_t time_ms) {
+__STATIC_INLINE ez_err_t task_add_delay(task_name_t name, eztm_t time_ms) {
     return ezos_add(name, NULL, time_ms);
 }
-__STATIC_FORCEINLINE ez_err_t force_add_para_delay(task_name_t name, void* para, eztm_t time_ms) {
+__STATIC_INLINE ez_err_t force_add_para_delay(task_name_t name, void* para, eztm_t time_ms) {
     ezos_delete(name);
     return ezos_add(name, para, time_ms);
 }
-__STATIC_FORCEINLINE ez_err_t force_add(task_name_t name) {
+__STATIC_INLINE ez_err_t force_add(task_name_t name) {
     return force_add_para_delay(name, NULL, EZTM_NULL);
 }
-__STATIC_FORCEINLINE ez_err_t force_add_para(task_name_t name, void* para) {
+__STATIC_INLINE ez_err_t force_add_para(task_name_t name, void* para) {
     return force_add_para_delay(name, para, EZTM_NULL);
 }
-__STATIC_FORCEINLINE ez_err_t force_add_delay(task_name_t name, eztm_t time_ms) {
+__STATIC_INLINE ez_err_t force_add_delay(task_name_t name, eztm_t time_ms) {
     return force_add_para_delay(name, NULL, time_ms);
 }
 
 // ezos_delay 的简化函数
-__STATIC_FORCEINLINE ez_err_t ezos_delay_null(void) {
+__STATIC_INLINE ez_err_t ezos_delay_null(void) {
     return ezos_delay(EZTM_NULL);  // 不延时, 等待轮询高优先级任务
 }
-__STATIC_FORCEINLINE ez_err_t ezos_delay_awhile(void) {
+__STATIC_INLINE ez_err_t ezos_delay_awhile(void) {
     return ezos_delay(EZTM_AWHILE);  // 延时一会, 等待轮询所有任务
 }
-__STATIC_FORCEINLINE ez_err_t ezos_delay_forever(void) {
+__STATIC_INLINE ez_err_t ezos_delay_forever(void) {
     return ezos_delay(EZTM_FOREVER);  // 永久挂起, 任务冻结状态
 }
 
@@ -219,16 +219,16 @@ void ezos_mem_sort(void);                                                // 内�
 void ezos_mem_clear(void);                                               // 强制清空所有动态内存, 一般不需要调用.
 
 // ezos_malloc 和 ezos_free 简化函数
-__STATIC_FORCEINLINE void* self_malloc(uint16_t size) {  // 当前任务, 申请或读取动态内存
+__STATIC_INLINE void* self_malloc(uint16_t size) {  // 当前任务, 申请或读取动态内存
     return ezos_malloc(ezos_self_name(), size, NULL);
 }
-__STATIC_FORCEINLINE void* self_mem_get(void) {  // 当前任务, 读取动态内存
+__STATIC_INLINE void* self_mem_get(void) {  // 当前任务, 读取动态内存
     return ezos_malloc(ezos_self_name(), 0, NULL);
 }
-__STATIC_FORCEINLINE void* ezos_mem_get(task_name_t task) {  // 读取指定任务的动态内存.
-    return ezos_malloc(task, 0, NULL);                       // 这样, 在指定任务生命周期内, 该动态内存就能全局使用.
+__STATIC_INLINE void* ezos_mem_get(task_name_t task) {  // 读取指定任务的动态内存.
+    return ezos_malloc(task, 0, NULL);                  // 这样, 在指定任务生命周期内, 该动态内存就能全局使用.
 }
-__STATIC_FORCEINLINE void self_free(void) {  // 当前任务, 释放动态内存, 一般不需要调用. 任务删除时会自动释放
+__STATIC_INLINE void self_free(void) {  // 当前任务, 释放动态内存, 一般不需要调用. 任务删除时会自动释放
     ezos_free(ezos_self_name());
 }
 

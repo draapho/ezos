@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_led.h
  * \brief           LED driver header file. 支持可调/呼吸/闪烁效果.
  */

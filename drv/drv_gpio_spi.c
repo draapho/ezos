@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_spi.c
  * \brief           SPI driver source file. IO口模拟 SPI 驱动程序. 主机模式.
  */

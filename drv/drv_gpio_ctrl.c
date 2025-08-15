@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_ctrl.c
  * \brief           Control port driver source file.
  */

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_key.c
  * \brief           KEY driver source file. 仅支持单按键的判断
  */

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_led.c
  * \brief           LED driver source file. 支持可调灯/呼吸灯效果.
  */

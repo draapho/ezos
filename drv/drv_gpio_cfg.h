@@ -1,4 +1,4 @@
-﻿/**
+/**
  * \file            drv_gpio_cfg.h
  * \brief           driver cfg gpio port header file.
  */
