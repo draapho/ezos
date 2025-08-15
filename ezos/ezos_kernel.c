@@ -449,8 +449,8 @@ ez_err_t ezos_done(void) {
 
     ezos_disable_irq();
     for (search = idle.next; search->name != EZOS_TASK_IDLE; search = search->next) {
-        if (search->status != EZOS_FROZEN) {  // 存在的任务不是冻结状态
-            result = EZOS_FAIL;               // 依旧有任务需要运行
+        if (search->status > EZOS_FROZEN) {
+            result = EZOS_FAIL;  // 依旧有任务需要运行
             break;
         }
     }
