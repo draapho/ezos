@@ -43,11 +43,12 @@
 extern "C" {
 #endif
 
-/* 设置中断开关函数 */
+/* 设置无操作和中断开关函数 */
+#define ezos_nop() __NOP()
 #define ezos_disable_irq() __disable_irq()
 #define ezos_enable_irq() __enable_irq()
 
-/*
+/* 中断标记压栈模式
 #define ezos_disable_irq()                      \
     {                                           \
         uint32_t ez_irq_mask = __get_PRIMASK(); \

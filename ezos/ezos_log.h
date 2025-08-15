@@ -54,28 +54,27 @@ extern void log_dump(char *desc, uint8_t *buf, uint16_t size);
 #define LOG(...)
 #define LOG_DUMP(...)
 #undef EZOS_LOG_LEVEL
-#define EZOS_LOG_LEVEL -1
 #endif /* EZOS_LOG */
 
-#if (EZOS_LOG_LEVEL >= 3)
+#if defined(EZOS_LOG_LEVEL) && (EZOS_LOG_LEVEL >= 3)
 #define LOG_I(fmt, ...) ez_printf("[I]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_I(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= 2)
+#if defined(EZOS_LOG_LEVEL) && (EZOS_LOG_LEVEL >= 2)
 #define LOG_W(fmt, ...) ez_printf("[W]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_W(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= 1)
+#if defined(EZOS_LOG_LEVEL) && (EZOS_LOG_LEVEL >= 1)
 #define LOG_D(fmt, ...) ez_printf("[D]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_D(...)
 #endif
 
-#if (EZOS_LOG_LEVEL >= 0)
+#if defined(EZOS_LOG_LEVEL) && (EZOS_LOG_LEVEL >= 0)
 #define LOG_E(fmt, ...) ez_printf("[E]" fmt, ##__VA_ARGS__)
 #else
 #define LOG_E(...)

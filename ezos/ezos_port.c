@@ -86,29 +86,25 @@ void log_dump(char *desc, uint8_t *buf, uint16_t size) {
 }
 
 /* 系统微秒级延时 */
-#include "cmsis_compiler.h"  // for __NOP()
-
-// #pragma GCC push_options
-// #pragma GCC optimize("O0")
+#include "ezos_def.h"
 void delay_us(uint32_t us) {
-    // 16MHZ need 16-2 __NOP(); 32MHZ need 32-2 __NOP();
+    // 16MHZ need 16-2 ezos_nop(); 32MHZ need 32-2 ezos_nop();
     for (; us > 0; us--) {
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        __NOP();
-        //__NOP(); // minus two sys clock
-        //__NOP();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        ezos_nop();
+        // ezos_nop(); // minus two sys clock
+        // ezos_nop();
     }
 }
-// #pragma GCC pop_options
