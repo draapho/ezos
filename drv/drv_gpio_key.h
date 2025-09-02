@@ -97,8 +97,8 @@ __STATIC_INLINE keyint_t key_clear(volatile keyint_t *event, key_name_t key_name
         value = *event & KEY_MASK(key_name);
         *event &= ~KEY_MASK(key_name);
     } else {
-        value = *event;
-        *event = 0;
+        value = *event & key_name;
+        *event &= ~key_name;
     }
     return value;
 }
