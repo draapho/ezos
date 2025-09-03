@@ -32,13 +32,13 @@ typedef enum {
 } i2c_ack_t;
 
 /* function */
-void i2c_init(i2c_name_t i2c_name, uint16_t baudrate_khz);           // I2C初始化
-void i2c_start(i2c_name_t i2c_name);                                 // 产生I2C起始信号
-void i2c_stop(i2c_name_t i2c_name);                                  // 产生I2C结束信号
-i2c_ack_t i2c_tx_addr_wr_slaver(i2c_name_t i2c_name, uint8_t addr);  // I2C准备写从设备
-i2c_ack_t i2c_tx_addr_rd_slaver(i2c_name_t i2c_name, uint8_t addr);  // I2C准备读从设备
-i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data);            // 通过I2C发送一个字节
-uint8_t i2c_rx_byte(i2c_name_t i2c_name, i2c_ack_t ack);             // 通过I2C接收一个字节
+void i2c_init(i2c_name_t i2c_name, uint16_t baudrate_khz);                // I2C初始化
+void i2c_start(i2c_name_t i2c_name);                                      // 产生I2C起始信号
+void i2c_stop(i2c_name_t i2c_name);                                       // 产生I2C结束信号
+i2c_ack_t i2c_tx_addr_wr_slaver(i2c_name_t i2c_name, uint8_t addr_bit0);  // I2C准备写从设备
+i2c_ack_t i2c_tx_addr_rd_slaver(i2c_name_t i2c_name, uint8_t addr_bit0);  // I2C准备读从设备
+i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data);                 // 通过I2C发送一个字节
+uint8_t i2c_rx_byte(i2c_name_t i2c_name, i2c_ack_t ack);                  // 通过I2C接收一个字节
 
 #endif /* DRV_I2C_NAME_SCL_SDA */
 

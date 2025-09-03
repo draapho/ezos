@@ -77,7 +77,7 @@ void i2c_init(i2c_name_t i2c_name, uint16_t baudrate_khz) {
     }
 }
 
-//	I2C起始信号
+//  I2C起始信号
 void i2c_start(i2c_name_t i2c_name) {
     if (i2c_name < DRV_I2C_NAME_END) {
         i2c_sda_high(i2c_name);
@@ -91,7 +91,7 @@ void i2c_start(i2c_name_t i2c_name) {
     }
 }
 
-//	I2C结束信号
+//  I2C结束信号
 void i2c_stop(i2c_name_t i2c_name) {
     if (i2c_name < DRV_I2C_NAME_END) {
         i2c_sda_low(i2c_name);
@@ -103,46 +103,46 @@ void i2c_stop(i2c_name_t i2c_name) {
 }
 
 /**
- * \brief		通过I2C发送一个7bit地址数据, 准备写从设备
- * \param[in]	i2c_name	see i2c_name_t
- * \param[in]	addr		要发送的7bit地址, bit0无效.
- * \return		i2c_ack_t
- *	\arg \c		I2C_ACK		0, I2C 有应答信号
- *	\arg \c		I2C_NO_ACK	1, I2C 无应答信号
+ * \brief       通过I2C发送一个7bit地址数据, 准备写从设备
+ * \param[in]   i2c_name    see i2c_name_t
+ * \param[in]   addr        要发送的7bit地址, 需左移一位, bit0无效.
+ * \return      i2c_ack_t
+ *  \arg \c     I2C_ACK     0, I2C 有应答信号
+ *  \arg \c     I2C_NO_ACK  1, I2C 无应答信号
  */
-i2c_ack_t i2c_tx_addr_wr_slaver(i2c_name_t i2c_name, uint8_t addr) {
+i2c_ack_t i2c_tx_addr_wr_slaver(i2c_name_t i2c_name, uint8_t addr_bit0) {
     i2c_ack_t ack = I2C_NO_ACK;
     if (i2c_name < DRV_I2C_NAME_END) {
-        addr &= 0xFE;  // 标记为写从设备
-        ack = i2c_tx_byte(i2c_name, addr);
+        addr_bit0 &= 0xFE;  // 标记为写从设备
+        ack = i2c_tx_byte(i2c_name, addr_bit0);
     }
     return ack;
 }
 
 /**
- * \brief		通过I2C发送一个7bit地址数据, 准备读从设备
- * \param[in]	i2c_name	see i2c_name_t
- * \param[in]	addr		要发送的7bit地址, bit0无效.
- * \return		i2c_ack_t
- *	\arg \c		I2C_ACK		0, I2C 有应答信号
- *	\arg \c		I2C_NO_ACK	1, I2C 无应答信号
+ * \brief       通过I2C发送一个7bit地址数据, 准备读从设备
+ * \param[in]   i2c_name    see i2c_name_t
+ * \param[in]   addr        要发送的7bit地址, 需左移一位, bit0无效.
+ * \return      i2c_ack_t
+ *  \arg \c     I2C_ACK     0, I2C 有应答信号
+ *  \arg \c     I2C_NO_ACK  1, I2C 无应答信号
  */
-i2c_ack_t i2c_tx_addr_rd_slaver(i2c_name_t i2c_name, uint8_t addr) {
+i2c_ack_t i2c_tx_addr_rd_slaver(i2c_name_t i2c_name, uint8_t addr_bit0) {
     i2c_ack_t ack = I2C_NO_ACK;
     if (i2c_name < DRV_I2C_NAME_END) {
-        addr |= 0x01;  // 标记为读从设备
-        ack = i2c_tx_byte(i2c_name, addr);
+        addr_bit0 |= 0x01;  // 标记为读从设备
+        ack = i2c_tx_byte(i2c_name, addr_bit0);
     }
     return ack;
 }
 
 /**
- * \brief		通过I2C发送一个字节的数据
- * \param[in]	i2c_name	see i2c_name_t
- * \param[in]	data		要发送的数据
- * \return		i2c_ack_t
- *	\arg \c		I2C_ACK		0, I2C 有应答信号
- *	\arg \c		I2C_NO_ACK	1, I2C 无应答信号
+ * \brief       通过I2C发送一个字节的数据
+ * \param[in]   i2c_name    see i2c_name_t
+ * \param[in]   data        要发送的数据
+ * \return      i2c_ack_t
+ *  \arg \c     I2C_ACK     0, I2C 有应答信号
+ *  \arg \c     I2C_NO_ACK  1, I2C 无应答信号
  */
 i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data) {
     uint8_t i;
@@ -178,12 +178,12 @@ i2c_ack_t i2c_tx_byte(i2c_name_t i2c_name, uint8_t data) {
 }
 
 /**
- * \brief		通过I2C接收一个字节的数据
- * \param[in]	i2c_name	see i2c_name_t
- * \param[in]	ack			要发送的应答信号
- *	\arg \c		I2C_ACK		0, I2C 有应答信号
- *	\arg \c		I2C_NO_ACK	1, I2C 无应答信号
- * \return		data, 接收到的数据
+ * \brief       通过I2C接收一个字节的数据
+ * \param[in]   i2c_name    see i2c_name_t
+ * \param[in]   ack         要发送的应答信号
+ *  \arg \c     I2C_ACK     0, I2C 有应答信号
+ *  \arg \c     I2C_NO_ACK  1, I2C 无应答信号
+ * \return      data, 接收到的数据
  */
 uint8_t i2c_rx_byte(i2c_name_t i2c_name, i2c_ack_t ack) {
     uint8_t i, data = 0;
