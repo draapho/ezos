@@ -144,8 +144,10 @@ __STATIC_INLINE void drv_output_low(const gpio_hw_t *io) {
 
 // 输出口电平翻转
 __STATIC_INLINE void drv_output_toggle(const gpio_hw_t *io) {
-    ((GPIO_TypeDef *)(io->port))->ODR ^= io->pin;
-    // drv_output_level() ? drv_gpio_low() : drv_gpio_high();
+    // ((GPIO_TypeDef *)(io->port))->ODR ^= io->pin;
+    drv_output_level(io) ? drv_output_low(io) : drv_output_high(io);
+    // LL_GPIO_TogglePin((GPIO_TypeDef *)(io->port), io->pin);
+    // HAL_GPIO_TogglePin((GPIO_TypeDef *)(io->port), io->pin);
 }
 
 /* delay function port*/
