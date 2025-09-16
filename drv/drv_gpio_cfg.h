@@ -64,7 +64,7 @@ __STATIC_INLINE void gpio_init_clk(void) {
 
 /* gpio port */
 typedef struct {
-    void *const port;
+    GPIO_TypeDef *const port;
     const uint16_t pin;
 } gpio_hw_t;
 
@@ -73,17 +73,17 @@ __STATIC_INLINE void drv_input_init(const gpio_hw_t *io) {
     // GPIO_InitTypeDef gpio = {0};
     // gpio.Pin = io->pin;
     // gpio.Mode = GPIO_MODE_INPUT;
-    // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    // HAL_GPIO_Init(io->port, &gpio);
 
     LL_GPIO_InitTypeDef gpio = {0};
     gpio.Pin = io->pin;
     gpio.Mode = LL_GPIO_MODE_INPUT;
-    LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    LL_GPIO_Init(io->port, &gpio);
 }
 
 // 读取输入口当前电平
 __STATIC_INLINE uint32_t drv_input_level(const gpio_hw_t *io) {
-    return ((GPIO_TypeDef *)(io->port))->IDR & io->pin;
+    return (io->port)->IDR & io->pin;
 }
 
 // 初始化为推挽输出口
@@ -92,14 +92,14 @@ __STATIC_INLINE void drv_output_pp_init(const gpio_hw_t *io) {
     // gpio.Pin = io->pin;
     // gpio.Mode = GPIO_MODE_OUTPUT_PP;
     // gpio.Speed = GPIO_SPEED_FREQ_HIGH;
-    // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    // HAL_GPIO_Init(io->port, &gpio);
 
     LL_GPIO_InitTypeDef gpio = {0};
     gpio.Pin = io->pin;
     gpio.Mode = LL_GPIO_MODE_OUTPUT;
     gpio.Speed = LL_GPIO_SPEED_FREQ_HIGH;
     gpio.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-    LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    LL_GPIO_Init(io->port, &gpio);
 }
 
 // 初始化为开漏输出口
@@ -110,7 +110,7 @@ __STATIC_INLINE void drv_output_od_init(const gpio_hw_t *io) {
     // gpio.Speed = GPIO_SPEED_FREQ_HIGH;
     // gpio.Pull = GPIO_NOPULL;  // 已有外部上拉
     // // gpio.Pull = GPIO_PULLUP;  // 使用内部上拉
-    // HAL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    // HAL_GPIO_Init(io->port, &gpio);
 
     LL_GPIO_InitTypeDef gpio = {0};
     gpio.Pin = io->pin;
@@ -119,35 +119,35 @@ __STATIC_INLINE void drv_output_od_init(const gpio_hw_t *io) {
     gpio.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
     gpio.Pull = LL_GPIO_PULL_NO;  // 已有外部上拉
     // gpio.Pull = LL_GPIO_PULL_UP;  // 使用内部上拉
-    LL_GPIO_Init((GPIO_TypeDef *)(io->port), &gpio);
+    LL_GPIO_Init(io->port, &gpio);
 }
 
 // 读取输出口当前电平
 __STATIC_INLINE uint32_t drv_output_level(const gpio_hw_t *io) {
-    return ((GPIO_TypeDef *)(io->port))->ODR & io->pin;
+    return (io->port)->ODR & io->pin;
 }
 
 // 输出口电平置高
 __STATIC_INLINE void drv_output_high(const gpio_hw_t *io) {
-    ((GPIO_TypeDef *)(io->port))->BSRR = io->pin;
-    // LL_GPIO_SetOutputPin((GPIO_TypeDef *)(io->port), io->pin);
-    // HAL_GPIO_WritePin((GPIO_TypeDef *)(io->port), io->pin, GPIO_PIN_SET);
+    (io->port)->BSRR = io->pin;
+    // LL_GPIO_SetOutputPin(io->port, io->pin);
+    // HAL_GPIO_WritePin(io->port, io->pin, GPIO_PIN_SET);
 }
 
 // 输出口电平置低
 __STATIC_INLINE void drv_output_low(const gpio_hw_t *io) {
-    ((GPIO_TypeDef *)(io->port))->BRR = io->pin;
-    // ((GPIO_TypeDef *)(io->port))->BSRR = io->pin << 16 ;
-    // LL_GPIO_ResetOutputPin((GPIO_TypeDef *)(io->port), io->pin);
-    // HAL_GPIO_WritePin((GPIO_TypeDef *)(io->port), io->pin, GPIO_PIN_RESET);
+    (io->port)->BRR = io->pin;
+    // (io->port)->BSRR = io->pin << 16 ;
+    // LL_GPIO_ResetOutputPin(io->port, io->pin);
+    // HAL_GPIO_WritePin(io->port, io->pin, GPIO_PIN_RESET);
 }
 
 // 输出口电平翻转
 __STATIC_INLINE void drv_output_toggle(const gpio_hw_t *io) {
-    // ((GPIO_TypeDef *)(io->port))->ODR ^= io->pin;
+    // (io->port)->ODR ^= io->pin;
     drv_output_level(io) ? drv_output_low(io) : drv_output_high(io);
-    // LL_GPIO_TogglePin((GPIO_TypeDef *)(io->port), io->pin);
-    // HAL_GPIO_TogglePin((GPIO_TypeDef *)(io->port), io->pin);
+    // LL_GPIO_TogglePin(io->port, io->pin);
+    // HAL_GPIO_TogglePin(io->port, io->pin);
 }
 
 /* delay function port*/
